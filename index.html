@@ -234,6 +234,11 @@ button{
   background:linear-gradient(135deg,#0d9b70,#28d7a1);
 }
 
+.quick-btn{
+  background:linear-gradient(135deg,#ff7a18,#ffb347);
+  box-shadow:0 10px 30px #ff8a183d;
+}
+
 .back-btn{
   background:transparent;
   box-shadow:none;
@@ -899,6 +904,10 @@ canvas{
     <div class="mode-title">
       ONLINE
     </div>
+
+    <button class="menu-btn quick-btn" id="quickMatchButton">
+      ⚡ QUICK MATCH
+    </button>
 
     <button class="menu-btn online-btn" id="createRoomButton">
       CREATE ROOM
@@ -1683,6 +1692,7 @@ let connection=null;
 
 let onlineHost=false;
 let onlineConnected=false;
+let quickMatchActive=false;
 
 let remoteInput={
   up:false,
@@ -3559,14 +3569,18 @@ function createRoom(){
   document.getElementById(
     "onlineStatus"
   ).textContent=
-    "Waiting for another player...";
+    quickMatchActive
+    ?"Quick Match: waiting for an opponent..."
+    :"Waiting for another player...";
 
   peer.on("open",()=>{
 
     document.getElementById(
       "onlineStatus"
     ).textContent=
-      "Room created! Send the code to your friend.";
+      quickMatchActive
+      ?"Quick Match is searching for an opponent..."
+      :"Room created! Send the code to your friend.";
   });
 
 
@@ -3694,7 +3708,9 @@ function startOnlineHostGame(){
   resultOverlay.classList.add("hidden");
 
   gameModeLabel.textContent=
-    "ONLINE • HOST";
+    quickMatchActive
+    ?"QUICK MATCH • HOST"
+    :"ONLINE • HOST";
 
   showOnly(gameWrap);
 
@@ -3740,12 +3756,22 @@ document.getElementById(
   "onlineButton"
 ).onclick=()=>{
 
+  disconnectOnline();
+
   showOnly(onlineMenu);
+
+  document.getElementById(
+    "roomCodeBox"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "roomInput"
+  ).value="";
 
   document.getElementById(
     "onlineStatus"
   ).textContent=
-    "Create a room or join a friend.";
+    "Choose Quick Match, create a room, or join a friend.";
 
 };
 
@@ -3763,6 +3789,7 @@ document.getElementById(
 document.getElementById(
   "createRoomButton"
 ).onclick=()=>{
+  quickMatchActive=false;
   createRoom();
 };
 
@@ -3770,13 +3797,69 @@ document.getElementById(
 document.getElementById(
   "joinRoomButton"
 ).onclick=()=>{
+  quickMatchActive=false;
   joinRoom();
 };
 
 
 /* =========================================================
-   NORMAL GAME START
+   QUICK MATCH
 ========================================================= */
+
+/*
+   Quick Match is part of PLAY ONLINE.
+   It starts an automatically created online room, so the player
+   does not have to choose a room code manually. The generated
+   code is shown while waiting for an opponent.
+*/
+
+document.getElementById(
+  "quickMatchButton"
+).onclick=()=>{
+
+  startQuickMatch();
+};
+
+
+function startQuickMatch(){
+
+  if(typeof Peer==="undefined"){
+
+    document.getElementById(
+      "onlineStatus"
+    ).textContent=
+      "Online service could not load.";
+
+    return;
+  }
+
+  disconnectOnline();
+  quickMatchActive=true;
+
+  document.getElementById(
+    "roomCodeBox"
+  ).classList.remove("hidden");
+
+  document.getElementById(
+    "roomInput"
+  ).value="";
+
+  document.getElementById(
+    "onlineStatus"
+  ).textContent=
+    "Finding an opponent...";
+
+  createRoom();
+
+  /* createRoom() generates the room automatically.
+     Keep the status focused on Quick Match. */
+  const status=
+    document.getElementById("onlineStatus");
+
+  status.textContent=
+    "Quick Match is ready. Waiting for an opponent...";
+}
+
 
 document.getElementById(
   "botButton"
