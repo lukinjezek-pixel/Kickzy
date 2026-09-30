@@ -183,6 +183,152 @@ canvas{
     display:none !important;
 }
 
+/* ================= COINS ================= */
+
+.coin-display{
+    margin:0 auto 28px;
+
+    width:max-content;
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    padding:10px 17px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    font-size:18px;
+    font-weight:900;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.18);
+}
+
+.coin-icon{
+    font-size:20px;
+}
+
+#coinAmount{
+    color:#ffd84d;
+}
+
+/* ================= RESULT ================= */
+
+#resultOverlay{
+    position:absolute;
+    inset:0;
+
+    z-index:30;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+        rgba(3,8,6,.76);
+
+    backdrop-filter:blur(10px);
+}
+
+.result-box{
+    width:min(460px,88vw);
+
+    padding:42px 30px;
+
+    text-align:center;
+
+    border-radius:25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25,38,31,.98),
+            rgba(8,14,11,.98)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.55);
+
+    animation:
+        resultAppear
+        .45s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes resultAppear{
+
+    0%{
+        opacity:0;
+        transform:scale(.75) translateY(25px);
+    }
+
+    100%{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+.result-title{
+    font-size:clamp(48px,12vw,76px);
+    font-weight:1000;
+    letter-spacing:3px;
+
+    margin-bottom:8px;
+
+    text-shadow:
+        0 8px 30px rgba(0,0,0,.4);
+}
+
+.result-score{
+    font-size:24px;
+    font-weight:900;
+
+    opacity:.8;
+
+    margin-bottom:30px;
+}
+
+.result-coins{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:9px;
+
+    font-size:25px;
+    font-weight:1000;
+
+    color:#ffd84d;
+
+    margin-bottom:30px;
+}
+
+.result-coins small{
+    font-size:15px;
+    letter-spacing:2px;
+    opacity:.75;
+}
+
+.result-win{
+    color:#55d98a;
+}
+
+.result-lose{
+    color:#ff6464;
+}
+
+.result-draw{
+    color:#ffd84d;
+}
+
 /* ================= GAME ================= */
 
 .scoreboard{
@@ -336,6 +482,26 @@ canvas{
 
     font-weight:800;
 }
+
+@media(max-width:600px){
+
+    .logo{
+        letter-spacing:4px;
+    }
+
+    .menu-subtitle{
+        letter-spacing:3px;
+    }
+
+    .menu-btn{
+        padding:16px;
+        font-size:18px;
+    }
+
+    .result-box{
+        padding:35px 20px;
+    }
+}
 </style>
 </head>
 
@@ -355,6 +521,12 @@ canvas{
 
         <div class="menu-subtitle">
             FAST 2D FOOTBALL
+        </div>
+
+        <div class="coin-display">
+            <span class="coin-icon">🪙</span>
+            <span id="coinAmount">0</span>
+            <span>COINS</span>
         </div>
 
         <div class="menu-buttons">
@@ -480,8 +652,14 @@ canvas{
             STORE
         </div>
 
+        <div class="coin-display">
+            <span class="coin-icon">🪙</span>
+            <span id="storeCoinAmount">0</span>
+            <span>COINS</span>
+        </div>
+
         <div class="menu-subtitle">
-            COMING SOON
+            SKINS COMING SOON
         </div>
 
         <div class="menu-buttons">
@@ -546,6 +724,50 @@ canvas{
         GOAL!
     </div>
 
+    <!-- RESULT -->
+
+    <div
+        id="resultOverlay"
+        class="hidden">
+
+        <div class="result-box">
+
+            <div
+                id="resultTitle"
+                class="result-title">
+                YOU WIN
+            </div>
+
+            <div
+                id="resultScore"
+                class="result-score">
+                0 - 0
+            </div>
+
+            <div class="result-coins">
+
+                <span>🪙</span>
+
+                <span id="resultCoins">
+                    +50
+                </span>
+
+                <small>
+                    COINS
+                </small>
+
+            </div>
+
+            <button
+                class="menu-btn play-btn"
+                id="resultMenuButton">
+                CONTINUE
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 </div>
@@ -572,6 +794,24 @@ const storeMenu =
 const gameWrap =
     document.getElementById("gameWrap");
 
+const resultOverlay =
+    document.getElementById("resultOverlay");
+
+const resultTitle =
+    document.getElementById("resultTitle");
+
+const resultScore =
+    document.getElementById("resultScore");
+
+const resultCoins =
+    document.getElementById("resultCoins");
+
+const coinAmount =
+    document.getElementById("coinAmount");
+
+const storeCoinAmount =
+    document.getElementById("storeCoinAmount");
+
 
 let gameMode = "local";
 
@@ -579,6 +819,56 @@ let botDifficulty = "normal";
 
 let gameStarted = false;
 
+let matchFinished = false;
+
+
+/* =========================================================
+   COINS
+========================================================= */
+
+let coins =
+    Number(
+        localStorage.getItem(
+            "kickzyCoins"
+        )
+    ) || 0;
+
+
+function saveCoins(){
+
+    localStorage.setItem(
+        "kickzyCoins",
+        coins
+    );
+
+    updateCoinDisplays();
+}
+
+
+function updateCoinDisplays(){
+
+    coinAmount.textContent =
+        coins;
+
+    storeCoinAmount.textContent =
+        coins;
+}
+
+
+function addCoins(amount){
+
+    coins += amount;
+
+    saveCoins();
+}
+
+
+updateCoinDisplays();
+
+
+/* =========================================================
+   MENU
+========================================================= */
 
 function showOnly(element){
 
@@ -599,7 +889,12 @@ document.getElementById("playButton").onclick =
 
 
 document.getElementById("storeButton").onclick =
-    () => showOnly(storeMenu);
+    () => {
+
+        updateCoinDisplays();
+
+        showOnly(storeMenu);
+    };
 
 
 document.getElementById("modeBack").onclick =
@@ -659,8 +954,29 @@ document.getElementById("menuButton").onclick =
 
         gameStarted = false;
 
+        matchFinished = false;
+
         clearTimeout(
             goalRestartTimer
+        );
+
+        resultOverlay.classList.add(
+            "hidden"
+        );
+
+        showOnly(mainMenu);
+    };
+
+
+document.getElementById("resultMenuButton").onclick =
+    () => {
+
+        gameStarted = false;
+
+        matchFinished = false;
+
+        resultOverlay.classList.add(
+            "hidden"
         );
 
         showOnly(mainMenu);
@@ -810,7 +1126,8 @@ window.addEventListener(
 
         if(
             key === "r" &&
-            gameStarted
+            gameStarted &&
+            !matchFinished
         ){
 
             restartMatch();
@@ -1229,11 +1546,6 @@ function moveBot(dt){
     }
 
 
-    /*
-       Bot občas udělá malou chybu.
-       Díky tomu nepůsobí jako robot.
-    */
-
     botMistakeTimer -= dt;
 
 
@@ -1260,10 +1572,6 @@ function moveBot(dt){
     }
 
 
-    /*
-       Rozhodování.
-    */
-
     botThinkTimer -= dt;
 
 
@@ -1275,11 +1583,6 @@ function moveBot(dt){
             reactionTime;
 
 
-        /*
-           Pokud je míč blízko,
-           hlavní priorita = MÍČ.
-        */
-
         const ballDistance =
             distance(
                 red.x,
@@ -1289,20 +1592,10 @@ function moveBot(dt){
             );
 
 
-        /*
-           Pokud je míč na cestě k jeho
-           brance, musí ho začít bránit.
-        */
-
         const ballMovingToBotGoal =
             ball.vx > 1.5 &&
             ball.x > red.x - 180;
 
-
-        /*
-           Pokud je hráč u míče,
-           bot ho začne napadat.
-        */
 
         const blueHasBall =
             distance(
@@ -1317,17 +1610,9 @@ function moveBot(dt){
         let targetY;
 
 
-        /* -----------------------------------
-           1. MÍČ JE VOLNÝ
-        ----------------------------------- */
-
         if(
             ballDistance > 70
         ){
-
-            /*
-               Prostě běž za míčem.
-            */
 
             targetX =
                 ball.x;
@@ -1336,22 +1621,7 @@ function moveBot(dt){
                 ball.y;
 
         }
-
-
-        /* -----------------------------------
-           2. BOT JE U MÍČE
-        ----------------------------------- */
-
         else{
-
-            /*
-               Tady už se snaží hrát míč.
-            */
-
-            /*
-               Pokud je blízko hráče,
-               jde nejdřív proti němu.
-            */
 
             if(
                 blueHasBall
@@ -1364,17 +1634,7 @@ function moveBot(dt){
                     ball.y;
 
             }
-
-            /*
-               Jinak se snaží míč
-               poslat doleva.
-            */
-
             else{
-
-                /*
-                   Nejdřív míč získá.
-                */
 
                 targetX =
                     ball.x +
@@ -1382,15 +1642,9 @@ function moveBot(dt){
 
                 targetY =
                     ball.y;
-
             }
         }
 
-
-        /*
-           Když míč letí k jeho brance,
-           okamžitě ho začne nahánět.
-        */
 
         if(
             ballMovingToBotGoal
@@ -1403,10 +1657,6 @@ function moveBot(dt){
                 ball.y;
         }
 
-
-        /*
-           Malá lidská nepřesnost.
-        */
 
         targetX +=
             botMistakeX;
@@ -1435,10 +1685,6 @@ function moveBot(dt){
             );
     }
 
-
-    /*
-       Pohyb k cíli.
-    */
 
     let dx =
         botTargetX -
@@ -1484,10 +1730,6 @@ function moveBot(dt){
     }
 
 
-    /*
-       Maximální rychlost.
-    */
-
     const currentSpeed =
         Math.hypot(
             red.vx,
@@ -1518,10 +1760,6 @@ function moveBot(dt){
     }
 
 
-    /*
-       Zpomalení.
-    */
-
     red.vx *=
         Math.pow(
             .82,
@@ -1539,7 +1777,6 @@ function moveBot(dt){
         red.vx *
         dt *
         60;
-
 
     red.y +=
         red.vy *
@@ -1567,12 +1804,6 @@ function moveBot(dt){
         );
 
 
-    /*
-       =========================================
-       KOPÁNÍ
-       =========================================
-    */
-
     red.kickCooldown -= dt;
 
     botKickTimer -= dt;
@@ -1596,41 +1827,20 @@ function moveBot(dt){
         botKickTimer <= 0
     ){
 
-        /*
-           Bot je u míče.
-
-           Rozhodne se, kam ho kopnout.
-        */
-
         let shotX;
         let shotY;
 
-
-        /*
-           Když je míč na jeho pravé straně,
-           snaží se ho dostat doleva.
-        */
 
         if(
             ball.x >=
             red.x - 15
         ){
 
-            /*
-               Cíl = střed tvé branky.
-            */
-
             shotX =
                 field.left;
 
             shotY =
                 BASE_H / 2;
-
-
-            /*
-               Člověk ne vždy míří přesně
-               do středu.
-            */
 
             shotY +=
                 (Math.random() -
@@ -1639,14 +1849,6 @@ function moveBot(dt){
                 3;
 
         }
-
-
-        /*
-           Pokud je míč za botem,
-           nejdřív ho jednoduše odkopne
-           od sebe.
-        */
-
         else{
 
             shotX =
@@ -1686,10 +1888,6 @@ function moveBot(dt){
             shotDY /=
                 shotLength;
 
-
-            /*
-               Normální síla kopu.
-            */
 
             const power =
                 10.5;
@@ -2169,7 +2367,8 @@ function updateBall(dt){
 function goalScored(team){
 
     if(
-        goalInProgress
+        goalInProgress ||
+        matchFinished
     ){
         return;
     }
@@ -2251,14 +2450,113 @@ function goalScored(team){
         setTimeout(
             () => {
 
-                goalInProgress =
-                    false;
+                if(!matchFinished){
 
-                resetPositions();
+                    goalInProgress =
+                        false;
+
+                    resetPositions();
+
+                }
 
             },
             900
         );
+}
+
+
+/* =========================================================
+   MATCH RESULT
+========================================================= */
+
+function finishMatch(){
+
+    if(
+        matchFinished
+    ){
+        return;
+    }
+
+
+    matchFinished = true;
+
+    gameStarted = false;
+
+    goalInProgress = false;
+
+
+    clearTimeout(
+        goalRestartTimer
+    );
+
+
+    let result;
+    let reward;
+
+
+    if(
+        blueScore >
+        redScore
+    ){
+
+        result = "win";
+
+        reward = 50;
+
+        resultTitle.textContent =
+            "YOU WIN";
+
+        resultTitle.className =
+            "result-title result-win";
+
+    }
+    else if(
+        blueScore <
+        redScore
+    ){
+
+        result = "lose";
+
+        reward = 10;
+
+        resultTitle.textContent =
+            "YOU LOSE";
+
+        resultTitle.className =
+            "result-title result-lose";
+
+    }
+    else{
+
+        result = "draw";
+
+        reward = 10;
+
+        resultTitle.textContent =
+            "DRAW";
+
+        resultTitle.className =
+            "result-title result-draw";
+    }
+
+
+    addCoins(reward);
+
+
+    resultScore.textContent =
+        `${blueScore} - ${redScore}`;
+
+
+    resultCoins.textContent =
+        `+${reward}`;
+
+
+    resultOverlay.classList.remove(
+        "hidden"
+    );
+
+
+    playResultSound(result);
 }
 
 
@@ -2280,6 +2578,13 @@ function restartMatch(){
 
     goalInProgress =
         false;
+
+    matchFinished = false;
+
+
+    resultOverlay.classList.add(
+        "hidden"
+    );
 
 
     scoreElement.textContent =
@@ -2988,10 +3293,22 @@ function update(dt){
 
 
     if(
+        matchFinished
+    ){
+
+        updateParticles(dt);
+
+        return;
+    }
+
+
+    if(
         matchTime <= 0
     ){
 
         updateParticles(dt);
+
+        finishMatch();
 
         return;
     }
@@ -3052,10 +3369,6 @@ function update(dt){
         `${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
 
 
-    /*
-       BLUE PLAYER
-    */
-
     movePlayer(
 
         blue,
@@ -3071,10 +3384,6 @@ function update(dt){
         dt
     );
 
-
-    /*
-       RED PLAYER
-    */
 
     if(
         gameMode === "local"
@@ -3227,6 +3536,12 @@ function startGame(){
 
     gameStarted = true;
 
+    matchFinished = false;
+
+    resultOverlay.classList.add(
+        "hidden"
+    );
+
     showOnly(gameWrap);
 
     resizeCanvas();
@@ -3235,6 +3550,88 @@ function startGame(){
 
     lastTime =
         performance.now();
+}
+
+
+/* =========================================================
+   RESULT SOUND
+========================================================= */
+
+function playResultSound(result){
+
+    if(result === "win"){
+
+        beep(
+            523,
+            .12,
+            "sine",
+            .05
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    659,
+                    .12,
+                    "sine",
+                    .05
+                ),
+            100
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    784,
+                    .25,
+                    "sine",
+                    .06
+                ),
+            200
+        );
+
+    }
+    else if(result === "lose"){
+
+        beep(
+            300,
+            .18,
+            "triangle",
+            .04
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    220,
+                    .3,
+                    "triangle",
+                    .04
+                ),
+            140
+        );
+
+    }
+    else{
+
+        beep(
+            440,
+            .15,
+            "triangle",
+            .04
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    440,
+                    .15,
+                    "triangle",
+                    .04
+                ),
+            180
+        );
+    }
 }
 
 
