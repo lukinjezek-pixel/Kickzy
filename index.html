@@ -6,55 +6,54 @@
 <title>KICKZY</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
 }
 
-body {
-    background: #176b3a;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
+body{
+    background:#176b3a;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-#app,
-.game-wrap,
-canvas {
-    width: 100vw;
-    height: 100vh;
+#app{
+    width:100vw;
+    height:100vh;
 }
 
-#app {
-    position: relative;
+.game-wrap{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#176b3a;
 }
 
-.game-wrap {
-    position: relative;
-    overflow: hidden;
-    background: #176b3a;
-}
-
-canvas {
-    display: block;
-    touch-action: none;
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    touch-action:none;
 }
 
 /* ================= MENU ================= */
 
-.menu {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.menu{
+    position:fixed;
+    inset:0;
+    z-index:100;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
     background:
         radial-gradient(
@@ -65,52 +64,54 @@ canvas {
         );
 }
 
-.menu-box {
-    width: min(500px, 90vw);
-    text-align: center;
+.menu-box{
+    width:min(500px,90vw);
+    text-align:center;
 }
 
-.logo {
-    font-size: clamp(64px, 13vw, 120px);
-    font-weight: 1000;
-    letter-spacing: 8px;
+.logo{
+    font-size:clamp(64px,13vw,120px);
+    font-weight:1000;
+    letter-spacing:8px;
 
     text-shadow:
         0 8px 30px rgba(0,0,0,.5),
         0 0 30px rgba(76,167,255,.25);
 
-    margin-bottom: 4px;
+    margin-bottom:4px;
 }
 
-.menu-subtitle {
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 5px;
-    opacity: .6;
-    margin-bottom: 42px;
+.menu-subtitle{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:5px;
+    opacity:.6;
+    margin-bottom:42px;
 }
 
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.menu-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
 }
 
-.menu-btn {
-    width: 100%;
-    border: 0;
-    border-radius: 16px;
-    padding: 18px 20px;
+.menu-btn{
+    width:100%;
+    border:0;
+    border-radius:16px;
 
-    font-size: 20px;
-    font-weight: 900;
+    padding:18px 20px;
 
-    color: white;
-    background: rgba(255,255,255,.09);
+    font-size:20px;
+    font-weight:900;
 
-    border: 1px solid rgba(255,255,255,.14);
+    color:white;
 
-    cursor: pointer;
+    background:rgba(255,255,255,.09);
+
+    border:1px solid rgba(255,255,255,.14);
+
+    cursor:pointer;
 
     transition:
         transform .15s ease,
@@ -118,20 +119,20 @@ canvas {
         box-shadow .15s ease;
 }
 
-.menu-btn:hover {
-    transform: translateY(-3px);
+.menu-btn:hover{
+    transform:translateY(-3px);
 
-    background: rgba(255,255,255,.15);
+    background:rgba(255,255,255,.15);
 
     box-shadow:
         0 12px 30px rgba(0,0,0,.25);
 }
 
-.menu-btn:active {
-    transform: scale(.97);
+.menu-btn:active{
+    transform:scale(.97);
 }
 
-.play-btn {
+.play-btn{
     background:
         linear-gradient(
             135deg,
@@ -140,7 +141,7 @@ canvas {
         );
 }
 
-.play-btn:hover {
+.play-btn:hover{
     background:
         linear-gradient(
             135deg,
@@ -149,155 +150,140 @@ canvas {
         );
 }
 
-.store-btn {
-    background:
-        rgba(255,255,255,.07);
-}
+.back-btn{
+    margin-top:8px;
+    font-size:15px;
+    padding:13px;
 
-.back-btn {
-    margin-top: 8px;
-    font-size: 15px;
-    padding: 13px;
-
-    background: transparent;
+    background:transparent;
 
     border-color:
         rgba(255,255,255,.08);
 }
 
-.mode-title {
-    font-size: 32px;
-    font-weight: 1000;
-    margin-bottom: 28px;
+.mode-title{
+    font-size:32px;
+    font-weight:1000;
+    margin-bottom:28px;
 }
 
-.coming-soon {
-    opacity: .45;
-    cursor: default;
+.coming-soon{
+    opacity:.45;
+    cursor:default;
 }
 
-.coming-soon:hover {
-    transform: none;
+.coming-soon:hover{
+    transform:none;
     background:
         rgba(255,255,255,.09);
-    box-shadow: none;
+    box-shadow:none;
 }
 
-.hidden {
-    display: none !important;
+.hidden{
+    display:none !important;
 }
 
 /* ================= GAME ================= */
 
-.scoreboard {
-    position: absolute;
+.scoreboard{
+    position:absolute;
 
-    top: 14px;
-    left: 50%;
+    top:14px;
+    left:50%;
 
-    transform:
-        translateX(-50%);
+    transform:translateX(-50%);
 
-    display: flex;
-    align-items: center;
+    display:flex;
+    align-items:center;
 
-    gap: 18px;
+    gap:18px;
 
-    padding: 9px 18px;
+    padding:9px 18px;
 
-    border-radius: 16px;
+    border-radius:16px;
 
     background:
         rgba(5,8,14,.72);
 
-    backdrop-filter:
-        blur(10px);
+    backdrop-filter:blur(10px);
 
     border:
         1px solid
         rgba(255,255,255,.12);
 
-    pointer-events: none;
+    pointer-events:none;
 
-    z-index: 5;
+    z-index:5;
 }
 
-.team {
-    font-weight: 900;
-    font-size: 15px;
+.team{
+    font-weight:900;
+    font-size:15px;
 }
 
-.blue {
-    color: #53a8ff;
+.blue{
+    color:#53a8ff;
 }
 
-.red {
-    color: #ff6464;
+.red{
+    color:#ff6464;
 }
 
-.score {
-    font-size: 25px;
-    font-weight: 900;
-    min-width: 52px;
+.score{
+    font-size:25px;
+    font-weight:900;
+    min-width:52px;
 }
 
-.timer {
-    position: absolute;
+.timer{
+    position:absolute;
 
-    top: 70px;
-    left: 50%;
+    top:70px;
+    left:50%;
 
-    transform:
-        translateX(-50%);
+    transform:translateX(-50%);
 
-    color:
-        rgba(255,255,255,.8);
+    color:rgba(255,255,255,.8);
 
-    font-size: 13px;
+    font-size:13px;
 
-    font-weight: 700;
+    font-weight:700;
 
-    letter-spacing: 1px;
+    letter-spacing:1px;
 
-    pointer-events: none;
+    pointer-events:none;
 
-    z-index: 5;
+    z-index:5;
 }
 
-#goalText {
-    position: absolute;
-    inset: 0;
+#goalText{
+    position:absolute;
+    inset:0;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-    font-size:
-        clamp(
-            48px,
-            10vw,
-            110px
-        );
+    font-size:clamp(48px,10vw,110px);
 
-    font-weight: 1000;
+    font-weight:1000;
 
-    letter-spacing: 5px;
+    letter-spacing:5px;
 
-    opacity: 0;
+    opacity:0;
 
-    transform:
-        scale(.65);
+    transform:scale(.65);
 
-    pointer-events: none;
+    pointer-events:none;
 
-    z-index: 8;
+    z-index:8;
 
     text-shadow:
         0 8px 35px rgba(0,0,0,.5),
         0 0 35px rgba(255,255,255,.25);
 }
 
-#goalText.show {
+#goalText.show{
     animation:
         goalAnimation
         1.2s
@@ -305,63 +291,50 @@ canvas {
         forwards;
 }
 
-@keyframes goalAnimation {
+@keyframes goalAnimation{
 
-    0% {
-        opacity: 0;
-        transform: scale(.65);
+    0%{
+        opacity:0;
+        transform:scale(.65);
     }
 
-    20% {
-        opacity: 1;
-        transform: scale(1.12);
+    20%{
+        opacity:1;
+        transform:scale(1.12);
     }
 
-    45% {
-        transform: scale(1);
+    45%{
+        transform:scale(1);
     }
 
-    100% {
-        opacity: 0;
-        transform: scale(1.08);
+    100%{
+        opacity:0;
+        transform:scale(1.08);
     }
 }
 
-.pause-btn {
-    position: absolute;
+.pause-btn{
+    position:absolute;
 
-    right: 15px;
-    top: 15px;
+    right:15px;
+    top:15px;
 
-    z-index: 10;
+    z-index:10;
 
-    border: 0;
+    border:0;
 
-    border-radius: 10px;
+    border-radius:10px;
 
-    padding:
-        8px 12px;
+    padding:8px 12px;
 
-    color: white;
+    color:white;
 
     background:
         rgba(5,8,14,.65);
 
-    cursor: pointer;
+    cursor:pointer;
 
-    font-weight: 800;
-}
-
-@media(max-width:600px) {
-
-    .menu-subtitle {
-        margin-bottom: 30px;
-    }
-
-    .menu-btn {
-        padding: 16px;
-        font-size: 18px;
-    }
+    font-weight:800;
 }
 </style>
 </head>
@@ -393,7 +366,7 @@ canvas {
             </button>
 
             <button
-                class="menu-btn store-btn"
+                class="menu-btn"
                 id="storeButton">
                 STORE
             </button>
@@ -432,8 +405,7 @@ canvas {
             </button>
 
             <button
-                class="menu-btn coming-soon"
-                id="onlineButton">
+                class="menu-btn coming-soon">
                 PLAY ONLINE
                 <small>COMING SOON</small>
             </button>
@@ -586,135 +558,80 @@ canvas {
 ========================================================= */
 
 const mainMenu =
-    document.getElementById(
-        "mainMenu"
-    );
+    document.getElementById("mainMenu");
 
 const modeMenu =
-    document.getElementById(
-        "modeMenu"
-    );
+    document.getElementById("modeMenu");
 
 const difficultyMenu =
-    document.getElementById(
-        "difficultyMenu"
-    );
+    document.getElementById("difficultyMenu");
 
 const storeMenu =
-    document.getElementById(
-        "storeMenu"
-    );
+    document.getElementById("storeMenu");
 
 const gameWrap =
-    document.getElementById(
-        "gameWrap"
-    );
+    document.getElementById("gameWrap");
+
 
 let gameMode = "local";
 
-let botDifficulty =
-    "normal";
+let botDifficulty = "normal";
 
 let gameStarted = false;
 
 
-function showOnly(element) {
+function showOnly(element){
 
-    mainMenu.classList.add(
-        "hidden"
-    );
+    mainMenu.classList.add("hidden");
+    modeMenu.classList.add("hidden");
+    difficultyMenu.classList.add("hidden");
+    storeMenu.classList.add("hidden");
+    gameWrap.classList.add("hidden");
 
-    modeMenu.classList.add(
-        "hidden"
-    );
-
-    difficultyMenu.classList.add(
-        "hidden"
-    );
-
-    storeMenu.classList.add(
-        "hidden"
-    );
-
-    gameWrap.classList.add(
-        "hidden"
-    );
-
-    if (element) {
-        element.classList.remove(
-            "hidden"
-        );
+    if(element){
+        element.classList.remove("hidden");
     }
 }
 
 
-document.getElementById(
-    "playButton"
-).onclick = () => {
-
-    showOnly(modeMenu);
-
-};
+document.getElementById("playButton").onclick =
+    () => showOnly(modeMenu);
 
 
-document.getElementById(
-    "storeButton"
-).onclick = () => {
-
-    showOnly(storeMenu);
-
-};
+document.getElementById("storeButton").onclick =
+    () => showOnly(storeMenu);
 
 
-document.getElementById(
-    "modeBack"
-).onclick = () => {
-
-    showOnly(mainMenu);
-
-};
+document.getElementById("modeBack").onclick =
+    () => showOnly(mainMenu);
 
 
-document.getElementById(
-    "storeBack"
-).onclick = () => {
-
-    showOnly(mainMenu);
-
-};
+document.getElementById("storeBack").onclick =
+    () => showOnly(mainMenu);
 
 
-document.getElementById(
-    "botButton"
-).onclick = () => {
+document.getElementById("botButton").onclick =
+    () => {
 
-    gameMode = "bot";
+        gameMode = "bot";
 
-    showOnly(
-        difficultyMenu
-    );
-
-};
+        showOnly(
+            difficultyMenu
+        );
+    };
 
 
-document.getElementById(
-    "localButton"
-).onclick = () => {
+document.getElementById("localButton").onclick =
+    () => {
 
-    gameMode = "local";
+        gameMode = "local";
 
-    startGame();
-
-};
+        startGame();
+    };
 
 
-document.getElementById(
-    "difficultyBack"
-).onclick = () => {
-
-    showOnly(modeMenu);
-
-};
+document.getElementById("difficultyBack").onclick =
+    () => showOnly(modeMenu);
 
 
 document.querySelectorAll(
@@ -726,32 +643,28 @@ document.querySelectorAll(
         () => {
 
             botDifficulty =
-                button.dataset
-                    .difficulty;
+                button.dataset.difficulty;
 
             gameMode = "bot";
 
             startGame();
-
         }
     );
 
 });
 
 
-document.getElementById(
-    "menuButton"
-).onclick = () => {
+document.getElementById("menuButton").onclick =
+    () => {
 
-    gameStarted = false;
+        gameStarted = false;
 
-    clearTimeout(
-        goalRestartTimer
-    );
+        clearTimeout(
+            goalRestartTimer
+        );
 
-    showOnly(mainMenu);
-
-};
+        showOnly(mainMenu);
+    };
 
 
 /* =========================================================
@@ -759,62 +672,53 @@ document.getElementById(
 ========================================================= */
 
 const canvas =
-    document.getElementById(
-        "game"
-    );
+    document.getElementById("game");
 
 const ctx =
     canvas.getContext("2d");
 
 const scoreElement =
-    document.getElementById(
-        "score"
-    );
+    document.getElementById("score");
 
 const timerElement =
-    document.getElementById(
-        "timer"
-    );
+    document.getElementById("timer");
 
 const goalText =
-    document.getElementById(
-        "goalText"
-    );
+    document.getElementById("goalText");
 
-
-let W = 1000;
-let H = 560;
 
 const BASE_W = 1000;
 const BASE_H = 560;
 
 
+let W = 1000;
+let H = 560;
+
+let gameScale = 1;
+
+let offsetX = 0;
+let offsetY = 0;
+
+
 const field = {
 
-    left: 35,
-    right: 965,
-    top: 35,
-    bottom: 525
+    left:35,
+    right:965,
+    top:35,
+    bottom:525
 
 };
 
 
 const goal = {
 
-    width: 34,
-    height: 150
+    width:34,
+    height:150
 
 };
 
 
-let gameScale = 1;
-
-let offsetX = 0;
-
-let offsetY = 0;
-
-
-function resizeCanvas() {
+function resizeCanvas(){
 
     const rect =
         canvas.getBoundingClientRect();
@@ -825,11 +729,13 @@ function resizeCanvas() {
             2
         );
 
+
     canvas.width =
         rect.width * dpr;
 
     canvas.height =
         rect.height * dpr;
+
 
     W = rect.width;
     H = rect.height;
@@ -857,15 +763,12 @@ function resizeCanvas() {
 
 
     ctx.setTransform(
-
         dpr * gameScale,
         0,
         0,
         dpr * gameScale,
-
         dpr * offsetX,
         dpr * offsetY
-
     );
 }
 
@@ -893,30 +796,25 @@ window.addEventListener(
         keys[key] = true;
 
 
-        if (
-            [
-                "arrowup",
-                "arrowdown",
-                "arrowleft",
-                "arrowright",
-                " "
-            ].includes(key)
-        ) {
+        if([
+            "arrowup",
+            "arrowdown",
+            "arrowleft",
+            "arrowright",
+            " "
+        ].includes(key)){
 
             e.preventDefault();
-
         }
 
 
-        if (
+        if(
             key === "r" &&
             gameStarted
-        ) {
+        ){
 
             restartMatch();
-
         }
-
     }
 );
 
@@ -928,7 +826,6 @@ window.addEventListener(
         keys[
             e.key.toLowerCase()
         ] = false;
-
     }
 );
 
@@ -939,41 +836,41 @@ window.addEventListener(
 
 const blue = {
 
-    x: 0,
-    y: 0,
+    x:0,
+    y:0,
 
-    vx: 0,
-    vy: 0,
+    vx:0,
+    vy:0,
 
-    radius: 23,
+    radius:23,
 
-    color: "#4ca7ff",
+    color:"#4ca7ff",
 
-    kickCooldown: 0,
+    kickCooldown:0,
 
-    speed: .65,
-    maxSpeed: 5
+    speed:.65,
 
+    maxSpeed:5
 };
 
 
 const red = {
 
-    x: 0,
-    y: 0,
+    x:0,
+    y:0,
 
-    vx: 0,
-    vy: 0,
+    vx:0,
+    vy:0,
 
-    radius: 23,
+    radius:23,
 
-    color: "#ff5e66",
+    color:"#ff5e66",
 
-    kickCooldown: 0,
+    kickCooldown:0,
 
-    speed: .65,
-    maxSpeed: 5
+    speed:.65,
 
+    maxSpeed:5
 };
 
 
@@ -983,14 +880,13 @@ const red = {
 
 const ball = {
 
-    x: 0,
-    y: 0,
+    x:0,
+    y:0,
 
-    vx: 0,
-    vy: 0,
+    vx:0,
+    vy:0,
 
-    radius: 12
-
+    radius:12
 };
 
 
@@ -1014,20 +910,34 @@ let shake = 0;
 let goalInProgress =
     false;
 
-let goalRestartTimer =
-    null;
+let goalRestartTimer = null;
+
+
+/* =========================================================
+   BOT STATE
+========================================================= */
+
+let botThinkTimer = 0;
+
+let botKickTimer = 0;
+
+let botMistakeTimer = 0;
+
+let botMistakeX = 0;
+
+let botMistakeY = 0;
 
 
 /* =========================================================
    RESET
 ========================================================= */
 
-function resetPositions() {
+function resetPositions(){
 
     blue.x =
         field.left +
         (field.right -
-            field.left) *
+        field.left) *
         .28;
 
     blue.y =
@@ -1042,7 +952,7 @@ function resetPositions() {
     red.x =
         field.left +
         (field.right -
-            field.left) *
+        field.left) *
         .72;
 
     red.y =
@@ -1062,6 +972,17 @@ function resetPositions() {
 
     ball.vx = 0;
     ball.vy = 0;
+
+
+    botThinkTimer = 0;
+
+    botKickTimer = 0;
+
+    botMistakeTimer = 0;
+
+    botMistakeX = 0;
+
+    botMistakeY = 0;
 }
 
 
@@ -1076,7 +997,7 @@ function clamp(
     value,
     min,
     max
-) {
+){
 
     return Math.max(
         min,
@@ -1088,47 +1009,62 @@ function clamp(
 }
 
 
+function distance(
+    x1,
+    y1,
+    x2,
+    y2
+){
+
+    return Math.hypot(
+        x2 - x1,
+        y2 - y1
+    );
+}
+
+
 /* =========================================================
-   ORIGINAL PLAYER MOVEMENT
+   PLAYER MOVEMENT
 ========================================================= */
 
 function movePlayer(
     player,
     controls,
     dt
-) {
+){
 
     let dx = 0;
     let dy = 0;
 
 
-    if (keys[controls.up]) {
+    if(keys[controls.up]){
         dy -= 1;
     }
 
-    if (keys[controls.down]) {
+    if(keys[controls.down]){
         dy += 1;
     }
 
-    if (keys[controls.left]) {
+    if(keys[controls.left]){
         dx -= 1;
     }
 
-    if (keys[controls.right]) {
+    if(keys[controls.right]){
         dx += 1;
     }
 
 
-    if (
+    if(
         dx !== 0 ||
         dy !== 0
-    ) {
+    ){
 
         const length =
             Math.hypot(
                 dx,
                 dy
             );
+
 
         dx /= length;
         dy /= length;
@@ -1139,6 +1075,7 @@ function movePlayer(
             player.speed *
             dt *
             60;
+
 
         player.vy +=
             dy *
@@ -1155,15 +1092,16 @@ function movePlayer(
         );
 
 
-    if (
+    if(
         currentSpeed >
         player.maxSpeed
-    ) {
+    ){
 
         player.vx =
             player.vx /
             currentSpeed *
             player.maxSpeed;
+
 
         player.vy =
             player.vy /
@@ -1178,6 +1116,7 @@ function movePlayer(
             dt * 60
         );
 
+
     player.vy *=
         Math.pow(
             .82,
@@ -1189,6 +1128,7 @@ function movePlayer(
         player.vx *
         dt *
         60;
+
 
     player.y +=
         player.vy *
@@ -1219,10 +1159,10 @@ function movePlayer(
     player.kickCooldown -= dt;
 
 
-    if (
+    if(
         keys[controls.kick] &&
         player.kickCooldown <= 0
-    ) {
+    ){
 
         kick(player);
 
@@ -1233,586 +1173,319 @@ function movePlayer(
 
 
 /* =========================================================
-   SMART BOT AI
+   HUMAN-LIKE BOT
 ========================================================= */
 
-let botThinkTimer = 0;
+function moveBot(dt){
 
-let botKickTimer = 0;
-
-let botTargetX =
-    BASE_W * .65;
-
-let botTargetY =
-    BASE_H / 2;
-
-let botAction =
-    "attack";
-
-
-function distanceBetween(
-    a,
-    b
-) {
-
-    return Math.hypot(
-        a.x - b.x,
-        a.y - b.y
-    );
-}
-
-
-/*
-   Vrátí přibližný čas,
-   za který míč dorazí na X.
-*/
-
-function predictBallX(
-    seconds
-) {
-
-    let predicted =
-        ball.x +
-        ball.vx *
-        seconds *
-        60;
-
-    return clamp(
-        predicted,
-        field.left,
-        field.right
-    );
-}
-
-
-/*
-   Rozhodnutí bota.
-*/
-
-function chooseBotAction() {
-
-    const ballToBot =
-        distanceBetween(
-            ball,
-            red
-        );
-
-    const ballToBlue =
-        distanceBetween(
-            ball,
-            blue
-        );
-
-    /*
-       Když je míč blízko botovi,
-       může útočit.
-    */
-
-    if (
-        ball.x < BASE_W * .47 &&
-        ballToBlue < ballToBot + 80
-    ) {
-
-        botAction = "defend";
-
-        return;
-    }
-
-
-    /*
-       Když je míč na jeho polovině
-       a je blízko, snaží se ho získat.
-    */
-
-    if (
-        ball.x > BASE_W * .47
-    ) {
-
-        botAction = "attack";
-
-        return;
-    }
-
-
-    /*
-       Když je míč uprostřed,
-       podle pozice hráče.
-    */
-
-    if (
-        ballToBot < 180
-    ) {
-
-        botAction = "attack";
-
-    } else {
-
-        botAction = "defend";
-
-    }
-}
-
-
-/*
-   Hlavní AI.
-*/
-
-function moveBot(dt) {
-
-    if (
+    if(
         gameMode !== "bot" ||
         goalInProgress
-    ) {
+    ){
         return;
     }
 
 
+    let reactionTime = .12;
+
+    let speedMultiplier = .82;
+
+    let errorAmount = 8;
+
+
+    if(
+        botDifficulty === "easy"
+    ){
+
+        reactionTime = .20;
+
+        speedMultiplier = .70;
+
+        errorAmount = 25;
+    }
+
+
+    if(
+        botDifficulty === "normal"
+    ){
+
+        reactionTime = .11;
+
+        speedMultiplier = .84;
+
+        errorAmount = 10;
+    }
+
+
+    if(
+        botDifficulty === "hard"
+    ){
+
+        reactionTime = .055;
+
+        speedMultiplier = 1;
+
+        errorAmount = 4;
+    }
+
+
     /*
-       Obtížnost.
+       Bot občas udělá malou chybu.
+       Díky tomu nepůsobí jako robot.
     */
 
-    let thinkRate = .10;
-
-    let maxSpeed =
-        red.maxSpeed;
-
-    let prediction =
-        .18;
-
-    let shootingAccuracy =
-        .75;
+    botMistakeTimer -= dt;
 
 
-    if (
-        botDifficulty === "easy"
-    ) {
+    if(
+        botMistakeTimer <= 0
+    ){
 
-        thinkRate = .18;
+        botMistakeTimer =
+            .7 +
+            Math.random() *
+            1.8;
 
-        maxSpeed =
-            red.maxSpeed *
-            .72;
 
-        prediction =
-            .05;
+        botMistakeX =
+            (Math.random() -
+            .5) *
+            errorAmount;
 
-        shootingAccuracy =
-            .45;
+
+        botMistakeY =
+            (Math.random() -
+            .5) *
+            errorAmount;
     }
 
 
-    if (
-        botDifficulty === "normal"
-    ) {
-
-        thinkRate = .10;
-
-        maxSpeed =
-            red.maxSpeed *
-            .88;
-
-        prediction =
-            .12;
-
-        shootingAccuracy =
-            .70;
-    }
-
-
-    if (
-        botDifficulty === "hard"
-    ) {
-
-        thinkRate = .045;
-
-        maxSpeed =
-            red.maxSpeed;
-
-        prediction =
-            .20;
-
-        shootingAccuracy =
-            .92;
-    }
-
+    /*
+       Rozhodování.
+    */
 
     botThinkTimer -= dt;
 
 
-    if (
+    if(
         botThinkTimer <= 0
-    ) {
+    ){
 
         botThinkTimer =
-            thinkRate;
-
-        chooseBotAction();
-
-    }
-
-
-    /*
-       =========================================
-       ÚTOK
-       =========================================
-
-       Bot nechce běžet přímo za míčem.
-
-       Snaží se dostat ZA něj,
-       aby ho mohl poslat doleva.
-    */
-
-    if (
-        botAction === "attack"
-    ) {
-
-        const targetGoalX =
-            field.left - 40;
-
-        const targetGoalY =
-            BASE_H / 2;
+            reactionTime;
 
 
         /*
-           Směr od cíle k míči.
-
-           Tím získáme místo,
-           kde má bot stát před střelou.
+           Pokud je míč blízko,
+           hlavní priorita = MÍČ.
         */
 
-        let attackDX =
-            ball.x -
-            targetGoalX;
-
-        let attackDY =
-            ball.y -
-            targetGoalY;
-
-        const attackLength =
-            Math.hypot(
-                attackDX,
-                attackDY
+        const ballDistance =
+            distance(
+                red.x,
+                red.y,
+                ball.x,
+                ball.y
             );
 
 
-        if (
-            attackLength > .01
-        ) {
+        /*
+           Pokud je míč na cestě k jeho
+           brance, musí ho začít bránit.
+        */
 
-            attackDX /=
-                attackLength;
+        const ballMovingToBotGoal =
+            ball.vx > 1.5 &&
+            ball.x > red.x - 180;
 
-            attackDY /=
-                attackLength;
+
+        /*
+           Pokud je hráč u míče,
+           bot ho začne napadat.
+        */
+
+        const blueHasBall =
+            distance(
+                blue.x,
+                blue.y,
+                ball.x,
+                ball.y
+            ) < 75;
+
+
+        let targetX;
+        let targetY;
+
+
+        /* -----------------------------------
+           1. MÍČ JE VOLNÝ
+        ----------------------------------- */
+
+        if(
+            ballDistance > 70
+        ){
+
+            /*
+               Prostě běž za míčem.
+            */
+
+            targetX =
+                ball.x;
+
+            targetY =
+                ball.y;
+
         }
 
 
-        /*
-           Bot stojí trochu za míčem.
-        */
+        /* -----------------------------------
+           2. BOT JE U MÍČE
+        ----------------------------------- */
 
-        const behindDistance =
-            48;
-
-
-        let desiredX =
-            ball.x +
-            attackDX *
-            behindDistance;
-
-        let desiredY =
-            ball.y +
-            attackDY *
-            behindDistance;
-
-
-        /*
-           Když je míč příliš blízko
-           pravému okraji, bot ho nejdřív
-           dostane do lepší pozice.
-        */
-
-        desiredX =
-            clamp(
-                desiredX,
-                field.left +
-                    red.radius,
-                field.right -
-                    red.radius
-            );
-
-        desiredY =
-            clamp(
-                desiredY,
-                field.top +
-                    red.radius,
-                field.bottom -
-                    red.radius
-            );
-
-
-        botTargetX =
-            desiredX;
-
-        botTargetY =
-            desiredY;
-
-
-        /*
-           Pokud je bot už dost blízko míči,
-           začne připravovat střelu.
-        */
-
-        const distanceToBall =
-            distanceBetween(
-                red,
-                ball
-            );
-
-
-        if (
-            distanceToBall <
-            red.radius +
-            ball.radius +
-            25
-        ) {
+        else{
 
             /*
-               Cíl střely.
-
-               Většinou střed branky,
-               někdy trochu nahoru/dolů.
+               Tady už se snaží hrát míč.
             */
-
-            const targetY =
-                BASE_H / 2 +
-                (Math.random() - .5) *
-                45 *
-                (1 -
-                    shootingAccuracy);
-
 
             /*
-               Pokud je bot ve správném
-               postavení za míčem,
-               vystřelí.
+               Pokud je blízko hráče,
+               jde nejdřív proti němu.
             */
 
-            const ballToGoalX =
-                targetGoalX -
-                ball.x;
+            if(
+                blueHasBall
+            ){
 
-            const ballToGoalY =
-                targetY -
-                ball.y;
+                targetX =
+                    ball.x;
 
+                targetY =
+                    ball.y;
 
-            const shotLength =
-                Math.hypot(
-                    ballToGoalX,
-                    ballToGoalY
-                );
+            }
 
+            /*
+               Jinak se snaží míč
+               poslat doleva.
+            */
 
-            if (
-                shotLength > 0 &&
-                red.kickCooldown <= 0
-            ) {
+            else{
 
                 /*
-                   Jen vystřelí,
-                   pokud míč směřuje
-                   přibližně k soupeřově brance.
+                   Nejdřív míč získá.
                 */
 
-                const dot =
-                    ballToGoalX *
-                    attackDX +
-                    ballToGoalY *
-                    attackDY;
+                targetX =
+                    ball.x +
+                    28;
 
+                targetY =
+                    ball.y;
 
-                if (
-                    dot > 0
-                ) {
-
-                    const nx =
-                        ballToGoalX /
-                        shotLength;
-
-                    const ny =
-                        ballToGoalY /
-                        shotLength;
-
-
-                    ball.vx =
-                        nx *
-                        10.5 +
-                        red.vx *
-                        .45;
-
-                    ball.vy =
-                        ny *
-                        10.5 +
-                        red.vy *
-                        .45;
-
-
-                    createKickParticles(
-                        ball.x -
-                        nx * 7,
-
-                        ball.y -
-                        ny * 7
-                    );
-
-                    playKickSound();
-
-                    red.kickCooldown =
-                        .38;
-
-                    botKickTimer =
-                        .38;
-                }
             }
         }
 
-    }
-
-
-    /*
-       =========================================
-       OBRANA
-       =========================================
-    */
-
-    else {
 
         /*
-           Bot se snaží stát mezi míčem
-           a svou brankou.
+           Když míč letí k jeho brance,
+           okamžitě ho začne nahánět.
         */
 
-        const ownGoalX =
-            field.right + 40;
+        if(
+            ballMovingToBotGoal
+        ){
 
-        const ownGoalY =
-            BASE_H / 2;
+            targetX =
+                ball.x;
 
-
-        let defendDX =
-            ball.x -
-            ownGoalX;
-
-        let defendDY =
-            ball.y -
-            ownGoalY;
-
-
-        const defendLength =
-            Math.hypot(
-                defendDX,
-                defendDY
-            );
-
-
-        if (
-            defendLength > .01
-        ) {
-
-            defendDX /=
-                defendLength;
-
-            defendDY /=
-                defendLength;
+            targetY =
+                ball.y;
         }
 
 
-        const defendDistance =
-            85;
+        /*
+           Malá lidská nepřesnost.
+        */
 
+        targetX +=
+            botMistakeX;
 
-        botTargetX =
-            ball.x +
-            defendDX *
-            defendDistance;
-
-        botTargetY =
-            ball.y +
-            defendDY *
-            defendDistance;
+        targetY +=
+            botMistakeY;
 
 
         botTargetX =
             clamp(
-                botTargetX,
+                targetX,
                 field.left +
                     red.radius,
                 field.right -
                     red.radius
             );
 
+
         botTargetY =
             clamp(
-                botTargetY,
+                targetY,
                 field.top +
                     red.radius,
                 field.bottom -
                     red.radius
             );
-
     }
 
 
     /*
-       =========================================
-       POHYB K CÍLI
-       =========================================
+       Pohyb k cíli.
     */
 
-    let moveX =
+    let dx =
         botTargetX -
         red.x;
 
-    let moveY =
+    let dy =
         botTargetY -
         red.y;
 
 
-    const moveDistance =
+    const targetDistance =
         Math.hypot(
-            moveX,
-            moveY
+            dx,
+            dy
         );
 
 
-    if (
-        moveDistance > 5
-    ) {
+    if(
+        targetDistance > 4
+    ){
 
-        moveX /=
-            moveDistance;
+        dx /=
+            targetDistance;
 
-        moveY /=
-            moveDistance;
+        dy /=
+            targetDistance;
 
 
         red.vx +=
-            moveX *
+            dx *
             red.speed *
+            speedMultiplier *
             dt *
             60;
 
+
         red.vy +=
-            moveY *
+            dy *
             red.speed *
+            speedMultiplier *
             dt *
             60;
     }
 
 
     /*
-       Maximální rychlost bota.
+       Maximální rychlost.
     */
 
     const currentSpeed =
@@ -1822,25 +1495,31 @@ function moveBot(dt) {
         );
 
 
-    if (
+    const maxBotSpeed =
+        red.maxSpeed *
+        speedMultiplier;
+
+
+    if(
         currentSpeed >
-        maxSpeed
-    ) {
+        maxBotSpeed
+    ){
 
         red.vx =
             red.vx /
             currentSpeed *
-            maxSpeed;
+            maxBotSpeed;
+
 
         red.vy =
             red.vy /
             currentSpeed *
-            maxSpeed;
+            maxBotSpeed;
     }
 
 
     /*
-       Stejné zpomalení jako normální hráč.
+       Zpomalení.
     */
 
     red.vx *=
@@ -1861,15 +1540,12 @@ function moveBot(dt) {
         dt *
         60;
 
+
     red.y +=
         red.vy *
         dt *
         60;
 
-
-    /*
-       Hranice hřiště.
-    */
 
     red.x =
         clamp(
@@ -1879,6 +1555,7 @@ function moveBot(dt) {
             field.right -
                 red.radius
         );
+
 
     red.y =
         clamp(
@@ -1890,16 +1567,186 @@ function moveBot(dt) {
         );
 
 
+    /*
+       =========================================
+       KOPÁNÍ
+       =========================================
+    */
+
     red.kickCooldown -= dt;
 
+    botKickTimer -= dt;
+
+
+    const ballDistance =
+        distance(
+            red.x,
+            red.y,
+            ball.x,
+            ball.y
+        );
+
+
+    if(
+        ballDistance <
+            red.radius +
+            ball.radius +
+            32 &&
+        red.kickCooldown <= 0 &&
+        botKickTimer <= 0
+    ){
+
+        /*
+           Bot je u míče.
+
+           Rozhodne se, kam ho kopnout.
+        */
+
+        let shotX;
+        let shotY;
+
+
+        /*
+           Když je míč na jeho pravé straně,
+           snaží se ho dostat doleva.
+        */
+
+        if(
+            ball.x >=
+            red.x - 15
+        ){
+
+            /*
+               Cíl = střed tvé branky.
+            */
+
+            shotX =
+                field.left;
+
+            shotY =
+                BASE_H / 2;
+
+
+            /*
+               Člověk ne vždy míří přesně
+               do středu.
+            */
+
+            shotY +=
+                (Math.random() -
+                .5) *
+                errorAmount *
+                3;
+
+        }
+
+
+        /*
+           Pokud je míč za botem,
+           nejdřív ho jednoduše odkopne
+           od sebe.
+        */
+
+        else{
+
+            shotX =
+                ball.x +
+                (ball.x -
+                red.x) *
+                2;
+
+            shotY =
+                ball.y;
+        }
+
+
+        let shotDX =
+            shotX -
+            ball.x;
+
+        let shotDY =
+            shotY -
+            ball.y;
+
+
+        const shotLength =
+            Math.hypot(
+                shotDX,
+                shotDY
+            );
+
+
+        if(
+            shotLength > 0
+        ){
+
+            shotDX /=
+                shotLength;
+
+            shotDY /=
+                shotLength;
+
+
+            /*
+               Normální síla kopu.
+            */
+
+            const power =
+                10.5;
+
+
+            ball.vx =
+                shotDX *
+                power +
+                red.vx *
+                .45;
+
+
+            ball.vy =
+                shotDY *
+                power +
+                red.vy *
+                .45;
+
+
+            createKickParticles(
+                ball.x -
+                shotDX * 7,
+
+                ball.y -
+                shotDY * 7
+            );
+
+
+            playKickSound();
+
+
+            red.kickCooldown =
+                .38;
+
+            botKickTimer =
+                .30;
+        }
+    }
 }
+
+
+/* =========================================================
+   BOT TARGET
+========================================================= */
+
+let botTargetX =
+    BASE_W * .7;
+
+let botTargetY =
+    BASE_H / 2;
 
 
 /* =========================================================
    KICK
 ========================================================= */
 
-function kick(player) {
+function kick(player){
 
     const dx =
         ball.x -
@@ -1909,6 +1756,7 @@ function kick(player) {
         ball.y -
         player.y;
 
+
     const dist =
         Math.hypot(
             dx,
@@ -1916,20 +1764,20 @@ function kick(player) {
         );
 
 
-    if (
+    if(
         dist <
         player.radius +
         ball.radius +
         32
-    ) {
+    ){
 
         let nx;
         let ny;
 
 
-        if (
+        if(
             dist < .01
-        ) {
+        ){
 
             nx =
                 player === blue
@@ -1938,15 +1786,14 @@ function kick(player) {
 
             ny = 0;
 
-        } else {
+        }
+        else{
 
             nx =
-                dx /
-                dist;
+                dx / dist;
 
             ny =
-                dy /
-                dist;
+                dy / dist;
         }
 
 
@@ -1959,6 +1806,7 @@ function kick(player) {
             power +
             player.vx *
             .45;
+
 
         ball.vy =
             ny *
@@ -1977,7 +1825,6 @@ function kick(player) {
 
 
         playKickSound();
-
     }
 }
 
@@ -1989,7 +1836,7 @@ function kick(player) {
 function handlePlayerCollision(
     a,
     b
-) {
+){
 
     const dx =
         b.x - a.x;
@@ -1997,29 +1844,29 @@ function handlePlayerCollision(
     const dy =
         b.y - a.y;
 
+
     const dist =
         Math.hypot(
             dx,
             dy
         );
 
+
     const minDist =
         a.radius +
         b.radius;
 
 
-    if (
+    if(
         dist > 0 &&
         dist < minDist
-    ) {
+    ){
 
         const nx =
-            dx /
-            dist;
+            dx / dist;
 
         const ny =
-            dy /
-            dist;
+            dy / dist;
 
 
         const overlap =
@@ -2049,27 +1896,21 @@ function handlePlayerCollision(
             2;
 
 
-        const push =
-            1.8;
+        const push = 1.8;
 
 
         a.vx -=
-            nx *
-            push;
+            nx * push;
 
         a.vy -=
-            ny *
-            push;
+            ny * push;
 
 
         b.vx +=
-            nx *
-            push;
+            nx * push;
 
         b.vy +=
-            ny *
-            push;
-
+            ny * push;
     }
 }
 
@@ -2080,11 +1921,11 @@ function handlePlayerCollision(
 
 function handleBallCollision(
     player
-) {
+){
 
-    if (
+    if(
         goalInProgress
-    ) {
+    ){
         return;
     }
 
@@ -2110,19 +1951,16 @@ function handleBallCollision(
         ball.radius;
 
 
-    if (
-        dist <
-            minDist &&
+    if(
+        dist < minDist &&
         dist > 0
-    ) {
+    ){
 
         const nx =
-            dx /
-            dist;
+            dx / dist;
 
         const ny =
-            dy /
-            dist;
+            dy / dist;
 
 
         const overlap =
@@ -2160,7 +1998,6 @@ function handleBallCollision(
             speed +
             player.vy *
             .25;
-
     }
 }
 
@@ -2169,11 +2006,11 @@ function handleBallCollision(
    BALL UPDATE
 ========================================================= */
 
-function updateBall(dt) {
+function updateBall(dt){
 
-    if (
+    if(
         goalInProgress
-    ) {
+    ){
         return;
     }
 
@@ -2182,6 +2019,7 @@ function updateBall(dt) {
         ball.vx *
         dt *
         60;
+
 
     ball.y +=
         ball.vy *
@@ -2206,6 +2044,7 @@ function updateBall(dt) {
         BASE_H / 2 -
         goal.height / 2;
 
+
     const goalBottom =
         BASE_H / 2 +
         goal.height / 2;
@@ -2213,23 +2052,22 @@ function updateBall(dt) {
 
     const insideGoal =
         ball.y >
-            goalTop &&
+        goalTop &&
         ball.y <
-            goalBottom;
+        goalBottom;
 
 
-    if (
+    if(
         ball.y -
         ball.radius <
         field.top
-    ) {
+    ){
 
         ball.y =
             field.top +
             ball.radius;
 
-        ball.vy *=
-            -.8;
+        ball.vy *= -.8;
 
         playWallSound();
 
@@ -2240,18 +2078,17 @@ function updateBall(dt) {
     }
 
 
-    if (
+    if(
         ball.y +
         ball.radius >
         field.bottom
-    ) {
+    ){
 
         ball.y =
             field.bottom -
             ball.radius;
 
-        ball.vy *=
-            -.8;
+        ball.vy *= -.8;
 
         playWallSound();
 
@@ -2262,15 +2099,15 @@ function updateBall(dt) {
     }
 
 
-    if (
+    if(
         ball.x -
         ball.radius <
         field.left
-    ) {
+    ){
 
-        if (
+        if(
             insideGoal
-        ) {
+        ){
 
             goalScored("red");
 
@@ -2282,8 +2119,7 @@ function updateBall(dt) {
             field.left +
             ball.radius;
 
-        ball.vx *=
-            -.8;
+        ball.vx *= -.8;
 
         playWallSound();
 
@@ -2294,15 +2130,15 @@ function updateBall(dt) {
     }
 
 
-    if (
+    if(
         ball.x +
         ball.radius >
         field.right
-    ) {
+    ){
 
-        if (
+        if(
             insideGoal
-        ) {
+        ){
 
             goalScored("blue");
 
@@ -2314,8 +2150,7 @@ function updateBall(dt) {
             field.right -
             ball.radius;
 
-        ball.vx *=
-            -.8;
+        ball.vx *= -.8;
 
         playWallSound();
 
@@ -2331,11 +2166,11 @@ function updateBall(dt) {
    GOAL
 ========================================================= */
 
-function goalScored(team) {
+function goalScored(team){
 
-    if (
+    if(
         goalInProgress
-    ) {
+    ){
         return;
     }
 
@@ -2348,23 +2183,22 @@ function goalScored(team) {
     ball.vy = 0;
 
 
-    if (
+    if(
         team === "blue"
-    ) {
+    ){
 
         blueScore++;
 
         ball.x =
-            field.right +
-            8;
+            field.right + 8;
 
-    } else {
+    }
+    else{
 
         redScore++;
 
         ball.x =
-            field.left -
-            8;
+            field.left - 8;
     }
 
 
@@ -2395,17 +2229,16 @@ function goalScored(team) {
     playGoalSound();
 
 
-    for (
+    for(
         let i = 0;
         i < 40;
         i++
-    ) {
+    ){
 
         createGoalParticle(
             BASE_W / 2,
             BASE_H / 2
         );
-
     }
 
 
@@ -2423,9 +2256,6 @@ function goalScored(team) {
 
                 resetPositions();
 
-                botAction =
-                    "attack";
-
             },
             900
         );
@@ -2436,7 +2266,7 @@ function goalScored(team) {
    RESTART
 ========================================================= */
 
-function restartMatch() {
+function restartMatch(){
 
     clearTimeout(
         goalRestartTimer
@@ -2470,14 +2300,6 @@ function restartMatch() {
     shake = 0;
 
 
-    botThinkTimer = 0;
-
-    botKickTimer = 0;
-
-    botAction =
-        "attack";
-
-
     resetPositions();
 }
 
@@ -2489,13 +2311,13 @@ function restartMatch() {
 function createKickParticles(
     x,
     y
-) {
+){
 
-    for (
+    for(
         let i = 0;
         i < 7;
         i++
-    ) {
+    ){
 
         particles.push({
 
@@ -2504,23 +2326,21 @@ function createKickParticles(
 
             vx:
                 (Math.random() -
-                    .5) *
+                .5) *
                 3,
 
             vy:
                 (Math.random() -
-                    .5) *
+                .5) *
                 3,
 
-            life: .35,
+            life:.35,
 
             size:
                 Math.random() *
                 4 +
                 2
-
         });
-
     }
 }
 
@@ -2528,13 +2348,13 @@ function createKickParticles(
 function createBounceParticles(
     x,
     y
-) {
+){
 
-    for (
+    for(
         let i = 0;
         i < 4;
         i++
-    ) {
+    ){
 
         particles.push({
 
@@ -2543,20 +2363,18 @@ function createBounceParticles(
 
             vx:
                 (Math.random() -
-                    .5) *
+                .5) *
                 2,
 
             vy:
                 (Math.random() -
-                    .5) *
+                .5) *
                 2,
 
-            life: .2,
+            life:.2,
 
-            size: 3
-
+            size:3
         });
-
     }
 }
 
@@ -2564,7 +2382,7 @@ function createBounceParticles(
 function createGoalParticle(
     x,
     y
-) {
+){
 
     particles.push({
 
@@ -2573,35 +2391,34 @@ function createGoalParticle(
 
         vx:
             (Math.random() -
-                .5) *
+            .5) *
             10,
 
         vy:
             (Math.random() -
-                .5) *
+            .5) *
             10,
 
-        life: 1,
+        life:1,
 
         size:
             Math.random() *
             7 +
             3
-
     });
 }
 
 
-function updateParticles(dt) {
+function updateParticles(dt){
 
-    for (
+    for(
         let i =
             particles.length - 1;
 
         i >= 0;
 
         i--
-    ) {
+    ){
 
         const p =
             particles[i];
@@ -2611,6 +2428,7 @@ function updateParticles(dt) {
             p.vx *
             dt *
             60;
+
 
         p.y +=
             p.vy *
@@ -2625,25 +2443,24 @@ function updateParticles(dt) {
         p.life -= dt;
 
 
-        if (
+        if(
             p.life <= 0
-        ) {
+        ){
 
             particles.splice(
                 i,
                 1
             );
-
         }
     }
 }
 
 
 /* =========================================================
-   FIELD
+   FIELD DRAW
 ========================================================= */
 
-function drawField() {
+function drawField(){
 
     ctx.clearRect(
         0,
@@ -2665,7 +2482,7 @@ function drawField() {
     );
 
 
-    for (
+    for(
         let x =
             field.left;
 
@@ -2673,12 +2490,12 @@ function drawField() {
             field.right;
 
         x += 80
-    ) {
+    ){
 
         ctx.fillStyle =
             Math.floor(
                 (x -
-                    field.left) /
+                field.left) /
                 80
             ) % 2 === 0
 
@@ -2692,9 +2509,8 @@ function drawField() {
             field.top,
             80,
             field.bottom -
-                field.top
+            field.top
         );
-
     }
 
 
@@ -2708,9 +2524,9 @@ function drawField() {
         field.left,
         field.top,
         field.right -
-            field.left,
+        field.left,
         field.bottom -
-            field.top
+        field.top
     );
 
 
@@ -2812,9 +2628,7 @@ function drawField() {
 }
 
 
-function drawPenaltyArea(
-    side
-) {
+function drawPenaltyArea(side){
 
     const width = 120;
 
@@ -2823,7 +2637,9 @@ function drawPenaltyArea(
 
     const x =
         side === "left"
+
         ? field.left
+
         : field.right -
             width;
 
@@ -2838,7 +2654,7 @@ function drawPenaltyArea(
     ctx.strokeRect(
         x,
         BASE_H / 2 -
-            height / 2,
+        height / 2,
         width,
         height
     );
@@ -2851,7 +2667,7 @@ function drawPenaltyArea(
 
 function drawPlayer(
     player
-) {
+){
 
     const speed =
         Math.hypot(
@@ -2864,20 +2680,23 @@ function drawPlayer(
 
 
     ctx.ellipse(
+
         player.x,
+
         player.y +
-            player.radius +
-            5,
+        player.radius +
+        5,
 
         player.radius *
-            .8,
+        .8,
 
         player.radius *
-            .25,
+        .25,
 
         0,
         0,
         Math.PI * 2
+
     );
 
 
@@ -2892,11 +2711,14 @@ function drawPlayer(
 
 
     ctx.arc(
+
         player.x,
         player.y,
         player.radius,
+
         0,
         Math.PI * 2
+
     );
 
 
@@ -2931,9 +2753,9 @@ function drawPlayer(
         );
 
 
-    if (
+    if(
         len < .1
-    ) {
+    ){
 
         dx =
             player === blue
@@ -2942,11 +2764,11 @@ function drawPlayer(
 
         dy = 0;
 
-    } else {
+    }
+    else{
 
         dx /= len;
         dy /= len;
-
     }
 
 
@@ -2954,16 +2776,18 @@ function drawPlayer(
 
 
     ctx.arc(
+
         player.x +
-            dx * 9,
+        dx * 9,
 
         player.y +
-            dy * 9,
+        dy * 9,
 
         5,
 
         0,
         Math.PI * 2
+
     );
 
 
@@ -2974,9 +2798,9 @@ function drawPlayer(
     ctx.fill();
 
 
-    if (
+    if(
         speed > 1.5
-    ) {
+    ){
 
         ctx.beginPath();
 
@@ -2987,11 +2811,11 @@ function drawPlayer(
             player.y,
 
             player.radius +
-                4 +
-                Math.sin(
-                    Date.now() /
-                    70
-                ) * 2,
+            4 +
+            Math.sin(
+                Date.now() /
+                70
+            ) * 2,
 
             0,
             Math.PI * 2
@@ -3010,8 +2834,7 @@ function drawPlayer(
         ctx.stroke();
 
 
-        ctx.globalAlpha =
-            1;
+        ctx.globalAlpha = 1;
     }
 }
 
@@ -3020,7 +2843,7 @@ function drawPlayer(
    BALL DRAW
 ========================================================= */
 
-function drawBall() {
+function drawBall(){
 
     ctx.beginPath();
 
@@ -3030,14 +2853,14 @@ function drawBall() {
         ball.x,
 
         ball.y +
-            ball.radius +
-            5,
+        ball.radius +
+        5,
 
         ball.radius *
-            .8,
+        .8,
 
         ball.radius *
-            .25,
+        .25,
 
         0,
         0,
@@ -3113,11 +2936,11 @@ function drawBall() {
    PARTICLES DRAW
 ========================================================= */
 
-function drawParticles() {
+function drawParticles(){
 
-    for (
+    for(
         const p of particles
-    ) {
+    ){
 
         ctx.globalAlpha =
             Math.max(
@@ -3146,7 +2969,6 @@ function drawParticles() {
 
 
         ctx.fill();
-
     }
 
 
@@ -3155,21 +2977,19 @@ function drawParticles() {
 
 
 /* =========================================================
-   GAME UPDATE
+   UPDATE
 ========================================================= */
 
-function update(dt) {
+function update(dt){
 
-    if (
-        !gameStarted
-    ) {
+    if(!gameStarted){
         return;
     }
 
 
-    if (
+    if(
         matchTime <= 0
-    ) {
+    ){
 
         updateParticles(dt);
 
@@ -3177,9 +2997,9 @@ function update(dt) {
     }
 
 
-    if (
+    if(
         goalInProgress
-    ) {
+    ){
 
         updateParticles(dt);
 
@@ -3191,12 +3011,10 @@ function update(dt) {
             );
 
 
-        if (
+        if(
             shake < .1
-        ) {
-
+        ){
             shake = 0;
-
         }
 
 
@@ -3207,12 +3025,10 @@ function update(dt) {
     matchTime -= dt;
 
 
-    if (
+    if(
         matchTime < 0
-    ) {
-
+    ){
         matchTime = 0;
-
     }
 
 
@@ -3237,7 +3053,7 @@ function update(dt) {
 
 
     /*
-       BLUE
+       BLUE PLAYER
     */
 
     movePlayer(
@@ -3245,43 +3061,42 @@ function update(dt) {
         blue,
 
         {
-            up: "w",
-            down: "s",
-            left: "a",
-            right: "d",
-            kick: " "
+            up:"w",
+            down:"s",
+            left:"a",
+            right:"d",
+            kick:" "
         },
 
         dt
-
     );
 
 
     /*
-       RED
+       RED PLAYER
     */
 
-    if (
+    if(
         gameMode === "local"
-    ) {
+    ){
 
         movePlayer(
 
             red,
 
             {
-                up: "arrowup",
-                down: "arrowdown",
-                left: "arrowleft",
-                right: "arrowright",
-                kick: "enter"
+                up:"arrowup",
+                down:"arrowdown",
+                left:"arrowleft",
+                right:"arrowright",
+                kick:"enter"
             },
 
             dt
-
         );
 
-    } else {
+    }
+    else{
 
         moveBot(dt);
 
@@ -3306,7 +3121,6 @@ function update(dt) {
 
     updateBall(dt);
 
-
     updateParticles(dt);
 
 
@@ -3317,12 +3131,10 @@ function update(dt) {
         );
 
 
-    if (
+    if(
         shake < .1
-    ) {
-
+    ){
         shake = 0;
-
     }
 }
 
@@ -3331,27 +3143,26 @@ function update(dt) {
    DRAW
 ========================================================= */
 
-function draw() {
+function draw(){
 
     ctx.save();
 
 
-    if (
+    if(
         shake > 0
-    ) {
+    ){
 
         ctx.translate(
 
             (Math.random() -
-                .5) *
-                shake,
+            .5) *
+            shake,
 
             (Math.random() -
-                .5) *
-                shake
+            .5) *
+            shake
 
         );
-
     }
 
 
@@ -3374,11 +3185,11 @@ function draw() {
    GAME LOOP
 ========================================================= */
 
-function gameLoop(now) {
+function gameLoop(now){
 
     let dt =
         (now -
-            lastTime) /
+        lastTime) /
         1000;
 
 
@@ -3389,8 +3200,7 @@ function gameLoop(now) {
         );
 
 
-    lastTime =
-        now;
+    lastTime = now;
 
 
     update(dt);
@@ -3413,7 +3223,7 @@ requestAnimationFrame(
    START GAME
 ========================================================= */
 
-function startGame() {
+function startGame(){
 
     gameStarted = true;
 
@@ -3432,32 +3242,29 @@ function startGame() {
    SOUND
 ========================================================= */
 
-let audioContext =
-    null;
+let audioContext = null;
 
 
-function getAudio() {
+function getAudio(){
 
-    if (
+    if(
         !audioContext
-    ) {
+    ){
 
         audioContext =
-            new (
+            new(
                 window.AudioContext ||
                 window.webkitAudioContext
             )();
-
     }
 
 
-    if (
+    if(
         audioContext.state ===
         "suspended"
-    ) {
+    ){
 
         audioContext.resume();
-
     }
 
 
@@ -3466,13 +3273,11 @@ function getAudio() {
 
 
 function beep(
-
     frequency,
     duration,
-    type = "sine",
-    volume = .04
-
-) {
+    type="sine",
+    volume=.04
+){
 
     const audio =
         getAudio();
@@ -3495,28 +3300,19 @@ function beep(
 
 
     gain.gain.setValueAtTime(
-
         volume,
-
         audio.currentTime
-
     );
 
 
     gain.gain.exponentialRampToValueAtTime(
-
         .001,
-
         audio.currentTime +
-            duration
-
+        duration
     );
 
 
-    oscillator.connect(
-        gain
-    );
-
+    oscillator.connect(gain);
 
     gain.connect(
         audio.destination
@@ -3527,28 +3323,23 @@ function beep(
 
 
     oscillator.stop(
-
         audio.currentTime +
         duration
-
     );
 }
 
 
-function playKickSound() {
+function playKickSound(){
 
     beep(
-
         120,
         .07,
         "square",
         .035
-
     );
 
 
     setTimeout(
-
         () =>
             beep(
                 75,
@@ -3556,40 +3347,33 @@ function playKickSound() {
                 "triangle",
                 .025
             ),
-
         25
-
     );
 }
 
 
-function playWallSound() {
+function playWallSound(){
 
     beep(
-
         170,
         .045,
         "triangle",
         .018
-
     );
 }
 
 
-function playGoalSound() {
+function playGoalSound(){
 
     beep(
-
         440,
         .12,
         "sine",
         .05
-
     );
 
 
     setTimeout(
-
         () =>
             beep(
                 660,
@@ -3597,14 +3381,11 @@ function playGoalSound() {
                 "sine",
                 .05
             ),
-
         100
-
     );
 
 
     setTimeout(
-
         () =>
             beep(
                 880,
@@ -3612,9 +3393,7 @@ function playGoalSound() {
                 "sine",
                 .06
             ),
-
         210
-
     );
 }
 
