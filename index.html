@@ -30,16 +30,13 @@ body {
 #app {
     width: 100vw;
     height: 100vh;
-    text-align: center;
 }
 
 .game-wrap {
     position: relative;
     width: 100vw;
     height: 100vh;
-    border-radius: 0;
     overflow: hidden;
-    box-shadow: none;
     background: #176b3a;
 }
 
@@ -146,28 +143,6 @@ canvas {
         transform: scale(1.08);
     }
 }
-
-@media (max-width: 600px) {
-
-    .scoreboard {
-        top: 8px;
-        gap: 9px;
-        padding: 6px 10px;
-    }
-
-    .team {
-        font-size: 11px;
-    }
-
-    .score {
-        font-size: 19px;
-    }
-
-    .timer {
-        top: 49px;
-        font-size: 10px;
-    }
-}
 </style>
 </head>
 
@@ -175,7 +150,7 @@ canvas {
 
 <div id="app">
 
-    <div class="game-wrap" id="gameWrap">
+    <div class="game-wrap">
 
         <canvas id="game"></canvas>
 
@@ -201,33 +176,89 @@ const scoreElement = document.getElementById("score");
 const timerElement = document.getElementById("timer");
 const goalText = document.getElementById("goalText");
 
-const gameWrap = document.getElementById("gameWrap");
-
 let W = 1000;
 let H = 560;
 
+
+/* ---------------- FIELD SCALE ---------------- */
+
+/*
+   Původní hra používala virtuální hřiště
+   1000 × 560.
+
+   Teď pouze přepočítáme jeho souřadnice
+   podle velikosti fullscreen canvasu.
+*/
+
+const BASE_W = 1000;
+const BASE_H = 560;
+
+const field = {
+    left: 35,
+    right: 965,
+    top: 35,
+    bottom: 525
+};
+
+const goal = {
+    width: 34,
+    height: 150
+};
+
+let gameScale = 1;
+let offsetX = 0;
+let offsetY = 0;
+
 function resizeCanvas() {
 
-    const rect = canvas.getBoundingClientRect();
+    const rect =
+        canvas.getBoundingClientRect();
 
-    const dpr = Math.min(
-        window.devicePixelRatio || 1,
-        2
-    );
+    const dpr =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    canvas.width =
+        rect.width * dpr;
+
+    canvas.height =
+        rect.height * dpr;
 
     W = rect.width;
     H = rect.height;
 
+    /*
+       Zachováme původní poměr
+       1000 × 560.
+    */
+
+    gameScale =
+        Math.min(
+            W / BASE_W,
+            H / BASE_H
+        );
+
+    const gameWidth =
+        BASE_W * gameScale;
+
+    const gameHeight =
+        BASE_H * gameScale;
+
+    offsetX =
+        (W - gameWidth) / 2;
+
+    offsetY =
+        (H - gameHeight) / 2;
+
     ctx.setTransform(
-        dpr,
+        dpr * gameScale,
         0,
         0,
-        dpr,
-        0,
-        0
+        dpr * gameScale,
+        dpr * offsetX,
+        dpr * offsetY
     );
 }
 
@@ -238,13 +269,15 @@ window.addEventListener(
 
 resizeCanvas();
 
+
 /* ---------------- INPUT ---------------- */
 
 const keys = {};
 
 window.addEventListener("keydown", e => {
 
-    const key = e.key.toLowerCase();
+    const key =
+        e.key.toLowerCase();
 
     keys[key] = true;
 
@@ -267,9 +300,12 @@ window.addEventListener("keydown", e => {
 
 window.addEventListener("keyup", e => {
 
-    keys[e.key.toLowerCase()] = false;
+    keys[
+        e.key.toLowerCase()
+    ] = false;
 
 });
+
 
 /* ---------------- PLAYERS ---------------- */
 
@@ -307,6 +343,7 @@ const red = {
     maxSpeed: 5
 };
 
+
 /* ---------------- BALL ---------------- */
 
 const ball = {
@@ -319,6 +356,7 @@ const ball = {
     radius: 12
 };
 
+
 /* ---------------- GAME STATE ---------------- */
 
 let blueScore = 0;
@@ -326,7 +364,8 @@ let redScore = 0;
 
 let matchTime = 120;
 
-let lastTime = performance.now();
+let lastTime =
+    performance.now();
 
 let particles = [];
 
@@ -336,48 +375,51 @@ let goalInProgress = false;
 
 let goalRestartTimer = null;
 
-/* ---------------- FIELD ---------------- */
-
-const field = {
-    left: 35,
-    right: 965,
-    top: 35,
-    bottom: 525
-};
-
-const goal = {
-    width: 34,
-    height: 150
-};
 
 /* ---------------- RESET ---------------- */
 
 function resetPositions() {
 
-    blue.x = W * .28;
-    blue.y = H / 2;
+    blue.x =
+        field.left +
+        (field.right - field.left) *
+        .28;
+
+    blue.y =
+        BASE_H / 2;
 
     blue.vx = 0;
     blue.vy = 0;
 
     blue.kickCooldown = 0;
 
-    red.x = W * .72;
-    red.y = H / 2;
+
+    red.x =
+        field.left +
+        (field.right - field.left) *
+        .72;
+
+    red.y =
+        BASE_H / 2;
 
     red.vx = 0;
     red.vy = 0;
 
     red.kickCooldown = 0;
 
-    ball.x = W / 2;
-    ball.y = H / 2;
+
+    ball.x =
+        BASE_W / 2;
+
+    ball.y =
+        BASE_H / 2;
 
     ball.vx = 0;
     ball.vy = 0;
 }
 
 resetPositions();
+
 
 /* ---------------- HELPERS ---------------- */
 
@@ -389,17 +431,14 @@ function clamp(value, min, max) {
     );
 }
 
-function distance(a, b) {
-
-    return Math.hypot(
-        a.x - b.x,
-        a.y - b.y
-    );
-}
 
 /* ---------------- PLAYER MOVEMENT ---------------- */
 
-function movePlayer(player, controls, dt) {
+function movePlayer(
+    player,
+    controls,
+    dt
+) {
 
     let dx = 0;
     let dy = 0;
@@ -420,9 +459,13 @@ function movePlayer(player, controls, dt) {
         dx += 1;
     }
 
-    if (dx !== 0 || dy !== 0) {
+    if (
+        dx !== 0 ||
+        dy !== 0
+    ) {
 
-        const length = Math.hypot(dx, dy);
+        const length =
+            Math.hypot(dx, dy);
 
         dx /= length;
         dy /= length;
@@ -446,7 +489,10 @@ function movePlayer(player, controls, dt) {
             player.vy
         );
 
-    if (currentSpeed > player.maxSpeed) {
+    if (
+        currentSpeed >
+        player.maxSpeed
+    ) {
 
         player.vx =
             player.vx /
@@ -481,17 +527,23 @@ function movePlayer(player, controls, dt) {
         dt *
         60;
 
-    player.x = clamp(
-        player.x,
-        field.left + player.radius,
-        field.right - player.radius
-    );
+    player.x =
+        clamp(
+            player.x,
+            field.left +
+                player.radius,
+            field.right -
+                player.radius
+        );
 
-    player.y = clamp(
-        player.y,
-        field.top + player.radius,
-        field.bottom - player.radius
-    );
+    player.y =
+        clamp(
+            player.y,
+            field.top +
+                player.radius,
+            field.bottom -
+                player.radius
+        );
 
     player.kickCooldown -= dt;
 
@@ -506,14 +558,19 @@ function movePlayer(player, controls, dt) {
     }
 }
 
+
 /* ---------------- KICK ---------------- */
 
 function kick(player) {
 
-    const dx = ball.x - player.x;
-    const dy = ball.y - player.y;
+    const dx =
+        ball.x - player.x;
 
-    const dist = Math.hypot(dx, dy);
+    const dy =
+        ball.y - player.y;
+
+    const dist =
+        Math.hypot(dx, dy);
 
     if (
         dist <
@@ -536,8 +593,11 @@ function kick(player) {
 
         } else {
 
-            nx = dx / dist;
-            ny = dy / dist;
+            nx =
+                dx / dist;
+
+            ny =
+                dy / dist;
         }
 
         const power = 10.5;
@@ -563,14 +623,22 @@ function kick(player) {
     }
 }
 
+
 /* ---------------- PLAYER COLLISION ---------------- */
 
-function handlePlayerCollision(a, b) {
+function handlePlayerCollision(
+    a,
+    b
+) {
 
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
+    const dx =
+        b.x - a.x;
 
-    const dist = Math.hypot(dx, dy);
+    const dy =
+        b.y - a.y;
+
+    const dist =
+        Math.hypot(dx, dy);
 
     const minDist =
         a.radius +
@@ -581,40 +649,70 @@ function handlePlayerCollision(a, b) {
         dist < minDist
     ) {
 
-        const nx = dx / dist;
-        const ny = dy / dist;
+        const nx =
+            dx / dist;
+
+        const ny =
+            dy / dist;
 
         const overlap =
             minDist - dist;
 
-        a.x -= nx * overlap / 2;
-        a.y -= ny * overlap / 2;
+        a.x -=
+            nx *
+            overlap /
+            2;
 
-        b.x += nx * overlap / 2;
-        b.y += ny * overlap / 2;
+        a.y -=
+            ny *
+            overlap /
+            2;
+
+        b.x +=
+            nx *
+            overlap /
+            2;
+
+        b.y +=
+            ny *
+            overlap /
+            2;
 
         const push = 1.8;
 
-        a.vx -= nx * push;
-        a.vy -= ny * push;
+        a.vx -=
+            nx * push;
 
-        b.vx += nx * push;
-        b.vy += ny * push;
+        a.vy -=
+            ny * push;
+
+        b.vx +=
+            nx * push;
+
+        b.vy +=
+            ny * push;
     }
 }
 
+
 /* ---------------- BALL COLLISION ---------------- */
 
-function handleBallCollision(player) {
+function handleBallCollision(
+    player
+) {
 
     if (goalInProgress) {
         return;
     }
 
-    const dx = ball.x - player.x;
-    const dy = ball.y - player.y;
+    const dx =
+        ball.x - player.x;
 
-    const dist = Math.hypot(dx, dy);
+    const dy =
+        ball.y - player.y;
+
+    const dist =
+        Math.hypot(dx, dy);
 
     const minDist =
         player.radius +
@@ -625,22 +723,29 @@ function handleBallCollision(player) {
         dist > 0
     ) {
 
-        const nx = dx / dist;
-        const ny = dy / dist;
+        const nx =
+            dx / dist;
+
+        const ny =
+            dy / dist;
 
         const overlap =
             minDist - dist;
 
-        ball.x += nx * overlap;
-        ball.y += ny * overlap;
+        ball.x +=
+            nx * overlap;
 
-        const speed = Math.max(
-            Math.hypot(
-                ball.vx,
-                ball.vy
-            ),
-            1.7
-        );
+        ball.y +=
+            ny * overlap;
+
+        const speed =
+            Math.max(
+                Math.hypot(
+                    ball.vx,
+                    ball.vy
+                ),
+                1.7
+            );
 
         ball.vx =
             nx *
@@ -655,6 +760,7 @@ function handleBallCollision(player) {
             .25;
     }
 }
+
 
 /* ---------------- BALL UPDATE ---------------- */
 
@@ -687,19 +793,21 @@ function updateBall(dt) {
         );
 
     const goalTop =
-        H / 2 -
+        BASE_H / 2 -
         goal.height / 2;
 
     const goalBottom =
-        H / 2 +
+        BASE_H / 2 +
         goal.height / 2;
 
     const insideGoal =
         ball.y > goalTop &&
         ball.y < goalBottom;
 
+
     if (
-        ball.y - ball.radius <
+        ball.y -
+        ball.radius <
         field.top
     ) {
 
@@ -717,8 +825,10 @@ function updateBall(dt) {
         );
     }
 
+
     if (
-        ball.y + ball.radius >
+        ball.y +
+        ball.radius >
         field.bottom
     ) {
 
@@ -736,8 +846,10 @@ function updateBall(dt) {
         );
     }
 
+
     if (
-        ball.x - ball.radius <
+        ball.x -
+        ball.radius <
         field.left
     ) {
 
@@ -762,8 +874,10 @@ function updateBall(dt) {
         );
     }
 
+
     if (
-        ball.x + ball.radius >
+        ball.x +
+        ball.radius >
         field.right
     ) {
 
@@ -788,6 +902,7 @@ function updateBall(dt) {
         );
     }
 }
+
 
 /* ---------------- GOAL ---------------- */
 
@@ -817,16 +932,21 @@ function goalScored(team) {
             field.left - 8;
     }
 
-    ball.y = H / 2;
+    ball.y =
+        BASE_H / 2;
 
     scoreElement.textContent =
         `${blueScore} - ${redScore}`;
 
-    goalText.classList.remove("show");
+    goalText.classList.remove(
+        "show"
+    );
 
     void goalText.offsetWidth;
 
-    goalText.classList.add("show");
+    goalText.classList.add(
+        "show"
+    );
 
     shake = 15;
 
@@ -839,28 +959,34 @@ function goalScored(team) {
     ) {
 
         createGoalParticle(
-            W / 2,
-            H / 2
+            BASE_W / 2,
+            BASE_H / 2
         );
     }
 
-    clearTimeout(goalRestartTimer);
+    clearTimeout(
+        goalRestartTimer
+    );
 
     goalRestartTimer =
         setTimeout(() => {
 
-            goalInProgress = false;
+            goalInProgress =
+                false;
 
             resetPositions();
 
         }, 900);
 }
 
+
 /* ---------------- RESTART ---------------- */
 
 function restartMatch() {
 
-    clearTimeout(goalRestartTimer);
+    clearTimeout(
+        goalRestartTimer
+    );
 
     blueScore = 0;
     redScore = 0;
@@ -885,6 +1011,7 @@ function restartMatch() {
 
     resetPositions();
 }
+
 
 /* ---------------- PARTICLES ---------------- */
 
@@ -1007,6 +1134,7 @@ function updateParticles(dt) {
     }
 }
 
+
 /* ---------------- FIELD ---------------- */
 
 function drawField() {
@@ -1014,18 +1142,20 @@ function drawField() {
     ctx.clearRect(
         0,
         0,
-        W,
-        H
+        BASE_W,
+        BASE_H
     );
 
-    ctx.fillStyle = "#19703c";
+    ctx.fillStyle =
+        "#19703c";
 
     ctx.fillRect(
         0,
         0,
-        W,
-        H
+        BASE_W,
+        BASE_H
     );
+
 
     for (
         let x = field.left;
@@ -1049,6 +1179,7 @@ function drawField() {
         );
     }
 
+
     ctx.strokeStyle =
         "rgba(255,255,255,.85)";
 
@@ -1063,25 +1194,27 @@ function drawField() {
         field.top
     );
 
+
     ctx.beginPath();
 
     ctx.moveTo(
-        W / 2,
+        BASE_W / 2,
         field.top
     );
 
     ctx.lineTo(
-        W / 2,
+        BASE_W / 2,
         field.bottom
     );
 
     ctx.stroke();
 
+
     ctx.beginPath();
 
     ctx.arc(
-        W / 2,
-        H / 2,
+        BASE_W / 2,
+        BASE_H / 2,
         75,
         0,
         Math.PI * 2
@@ -1089,25 +1222,29 @@ function drawField() {
 
     ctx.stroke();
 
+
     ctx.beginPath();
 
     ctx.arc(
-        W / 2,
-        H / 2,
+        BASE_W / 2,
+        BASE_H / 2,
         4,
         0,
         Math.PI * 2
     );
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle =
+        "white";
 
     ctx.fill();
+
 
     drawPenaltyArea("left");
     drawPenaltyArea("right");
 
+
     const goalTop =
-        H / 2 -
+        BASE_H / 2 -
         goal.height / 2;
 
     ctx.fillStyle =
@@ -1147,6 +1284,7 @@ function drawField() {
     );
 }
 
+
 function drawPenaltyArea(side) {
 
     const width = 120;
@@ -1164,11 +1302,13 @@ function drawPenaltyArea(side) {
 
     ctx.strokeRect(
         x,
-        H / 2 - height / 2,
+        BASE_H / 2 -
+        height / 2,
         width,
         height
     );
 }
+
 
 /* ---------------- PLAYER DRAW ---------------- */
 
@@ -1201,6 +1341,7 @@ function drawPlayer(player) {
 
     ctx.fill();
 
+
     ctx.beginPath();
 
     ctx.arc(
@@ -1222,6 +1363,7 @@ function drawPlayer(player) {
         "rgba(255,255,255,.85)";
 
     ctx.stroke();
+
 
     let dx = player.vx;
     let dy = player.vy;
@@ -1254,9 +1396,11 @@ function drawPlayer(player) {
         Math.PI * 2
     );
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle =
+        "white";
 
     ctx.fill();
+
 
     if (speed > 1.5) {
 
@@ -1286,6 +1430,7 @@ function drawPlayer(player) {
     }
 }
 
+
 /* ---------------- BALL DRAW ---------------- */
 
 function drawBall() {
@@ -1311,6 +1456,7 @@ function drawBall() {
 
     ctx.fill();
 
+
     ctx.beginPath();
 
     ctx.arc(
@@ -1321,7 +1467,8 @@ function drawBall() {
         Math.PI * 2
     );
 
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle =
+        "#fff";
 
     ctx.fill();
 
@@ -1331,6 +1478,7 @@ function drawBall() {
     ctx.lineWidth = 2;
 
     ctx.stroke();
+
 
     ctx.beginPath();
 
@@ -1347,6 +1495,7 @@ function drawBall() {
 
     ctx.fill();
 }
+
 
 /* ---------------- PARTICLES DRAW ---------------- */
 
@@ -1370,13 +1519,15 @@ function drawParticles() {
             Math.PI * 2
         );
 
-        ctx.fillStyle = "white";
+        ctx.fillStyle =
+            "white";
 
         ctx.fill();
     }
 
     ctx.globalAlpha = 1;
 }
+
 
 /* ---------------- GAME UPDATE ---------------- */
 
@@ -1426,6 +1577,7 @@ function update(dt) {
     timerElement.textContent =
         `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 
+
     movePlayer(
         blue,
         {
@@ -1449,6 +1601,7 @@ function update(dt) {
         },
         dt
     );
+
 
     handlePlayerCollision(
         blue,
@@ -1477,6 +1630,7 @@ function update(dt) {
         shake = 0;
     }
 }
+
 
 /* ---------------- DRAW ---------------- */
 
@@ -1508,6 +1662,7 @@ function draw() {
     ctx.restore();
 }
 
+
 /* ---------------- GAME LOOP ---------------- */
 
 function gameLoop(now) {
@@ -1535,6 +1690,7 @@ function gameLoop(now) {
 requestAnimationFrame(
     gameLoop
 );
+
 
 /* ---------------- SOUND ---------------- */
 
