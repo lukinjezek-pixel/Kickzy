@@ -203,6 +203,22 @@ button{
 }
 
 /* =========================
+   PROFILE
+========================= */
+.profile-button{position:fixed;top:20px;right:22px;z-index:20;display:flex;align-items:center;gap:10px;padding:9px 14px 9px 10px;border:1px solid #ffffff22;border-radius:999px;background:#08120ee8;color:#fff;cursor:pointer;box-shadow:0 8px 25px #0006;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.profile-button:hover{transform:translateY(-2px);border-color:#4ca7ff66;box-shadow:0 12px 30px #0008,0 0 18px #4ca7ff22}
+.profile-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#4ca7ff,#2465b7);border:2px solid #ffffffaa;font-size:17px;font-weight:1000}
+.profile-name-small{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:1000}
+.profile-box{max-width:620px}
+.profile-card{margin:0 auto 20px;padding:18px;border-radius:20px;background:#ffffff09;border:1px solid #ffffff18;box-shadow:0 15px 40px #0005}
+.profile-head{display:flex;align-items:center;gap:15px;text-align:left}
+.profile-avatar-large{width:70px;height:70px;flex:0 0 70px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#4ca7ff,#245ca8);border:3px solid #ffffffaa;font-size:30px;font-weight:1000;box-shadow:0 0 25px #4ca7ff55}
+.profile-name-area{flex:1}.profile-name-area small{display:block;margin-bottom:5px;color:#ffffff66;font-size:11px;font-weight:900;letter-spacing:2px}.profile-name-area strong{display:block;font-size:26px}
+.profile-edit{display:flex;gap:9px;margin-top:18px}.profile-edit input{min-width:0;flex:1;padding:12px 14px;border:1px solid #ffffff20;border-radius:12px;outline:none;background:#0005;color:#fff}.profile-edit button{padding:0 18px;border:1px solid #4ca7ff55;border-radius:12px;background:#176dcc;color:#fff;font-weight:1000;cursor:pointer}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.profile-stat{padding:13px 8px;border-radius:14px;background:#0004;border:1px solid #ffffff10}.profile-stat strong{display:block;font-size:20px}.profile-stat span{display:block;margin-top:3px;color:#ffffff66;font-size:10px;font-weight:900;letter-spacing:1px}
+@media(max-width:600px){.profile-button{top:12px;right:12px;padding:7px}.profile-name-small{display:none}.profile-stats{grid-template-columns:repeat(2,1fr)}}
+
+/* =========================
    BUTTONS
 ========================= */
 
@@ -979,6 +995,12 @@ canvas{
 ========================= -->
 
 <div class="menu" id="mainMenu">
+
+  <button class="profile-button" id="profileButton" aria-label="Open profile">
+    <span class="profile-avatar" id="profileAvatar">P</span>
+    <span class="profile-name-small" id="profileNameSmall">Player</span>
+  </button>
+
   <div class="menu-box">
 
     <div class="kickzy-logo">
@@ -1017,6 +1039,31 @@ canvas{
   </div>
 </div>
 
+
+<!-- =========================
+     PROFILE
+========================= -->
+<div class="menu hidden" id="profileMenu">
+  <div class="menu-box profile-box">
+    <div class="mode-title">PROFILE</div>
+    <div class="profile-card">
+      <div class="profile-head">
+        <div class="profile-avatar-large" id="profileAvatarLarge">P</div>
+        <div class="profile-name-area"><small>YOUR PLAYER</small><strong id="profileNameDisplay">Player</strong></div>
+      </div>
+      <div class="profile-edit"><input id="profileNameInput" type="text" maxlength="16" placeholder="Enter your name"><button id="profileSaveButton">SAVE</button></div>
+      <div class="profile-stats">
+        <div class="profile-stat"><strong id="profileMatches">0</strong><span>MATCHES</span></div>
+        <div class="profile-stat"><strong id="profileWins">0</strong><span>WINS</span></div>
+        <div class="profile-stat"><strong id="profileLosses">0</strong><span>LOSSES</span></div>
+        <div class="profile-stat"><strong id="profileDraws">0</strong><span>DRAWS</span></div>
+        <div class="profile-stat"><strong id="profileGoals">0</strong><span>GOALS</span></div>
+        <div class="profile-stat"><strong id="profileSkins">1</strong><span>SKINS OWNED</span></div>
+      </div>
+    </div>
+    <button class="menu-btn back-btn" id="profileBack">← BACK</button>
+  </div>
+</div>
 
 <!-- =========================
      SETTINGS
@@ -1414,6 +1461,7 @@ const onlineMenu=document.getElementById("onlineMenu");
 const storeMenu=document.getElementById("storeMenu");
 const settingsMenu=document.getElementById("settingsMenu");
 const coinShopMenu=document.getElementById("coinShopMenu");
+const profileMenu=document.getElementById("profileMenu");
 const gameWrap=document.getElementById("gameWrap");
 const resultOverlay=document.getElementById("resultOverlay");
 const pauseOverlay=document.getElementById("pauseOverlay");
@@ -1440,6 +1488,27 @@ if(!ownedSkins.includes("default")){
 
 let equippedSkin=localStorage.getItem("kickzyEquippedSkin")||"default";
 
+let playerName=localStorage.getItem("kickzyPlayerName")||"Player";
+let playerStats;
+try{playerStats=JSON.parse(localStorage.getItem("kickzyPlayerStats")||"null")}catch{playerStats=null}
+if(!playerStats||typeof playerStats!=="object")playerStats={matches:0,wins:0,losses:0,draws:0,goals:0};
+function saveProfile(){localStorage.setItem("kickzyPlayerName",playerName);localStorage.setItem("kickzyPlayerStats",JSON.stringify(playerStats))}
+function updateProfileUI(){
+  const name=playerName||"Player", initial=name.trim().charAt(0).toUpperCase()||"P";
+  document.getElementById("profileNameSmall").textContent=name;
+  document.getElementById("profileNameDisplay").textContent=name;
+  document.getElementById("profileAvatar").textContent=initial;
+  document.getElementById("profileAvatarLarge").textContent=initial;
+  document.getElementById("profileNameInput").value=name;
+  document.getElementById("profileMatches").textContent=playerStats.matches;
+  document.getElementById("profileWins").textContent=playerStats.wins;
+  document.getElementById("profileLosses").textContent=playerStats.losses;
+  document.getElementById("profileDraws").textContent=playerStats.draws;
+  document.getElementById("profileGoals").textContent=playerStats.goals;
+  document.getElementById("profileSkins").textContent=ownedSkins.length;
+}
+saveProfile();
+
 function saveCoins(){
   localStorage.setItem("kickzyCoins",coins);
   updateCoins();
@@ -1455,6 +1524,8 @@ function updateCoins(){
 function saveSkinData(){
   localStorage.setItem("kickzyOwnedSkins",JSON.stringify(ownedSkins));
   localStorage.setItem("kickzyEquippedSkin",equippedSkin);
+
+  updateProfileUI();
 }
 
 function addCoins(n){
@@ -1471,6 +1542,7 @@ function showOnly(el){
     storeMenu,
     settingsMenu,
     coinShopMenu,
+    profileMenu,
     gameWrap
   ].forEach(x=>x.classList.add("hidden"));
 
@@ -1772,6 +1844,24 @@ document.getElementById("settingsButton").onclick=()=>{
   updateSettingsUI();
   showOnly(settingsMenu);
 };
+
+document.getElementById("profileButton").onclick=()=>{
+  updateProfileUI();
+  showOnly(profileMenu);
+};
+
+document.getElementById("profileSaveButton").onclick=()=>{
+  const value=document.getElementById("profileNameInput").value.trim().replace(/\s+/g," ");
+  playerName=value||"Player";
+  saveProfile();
+  updateProfileUI();
+};
+
+document.getElementById("profileNameInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter")document.getElementById("profileSaveButton").click();
+});
+
+document.getElementById("profileBack").onclick=()=>showOnly(mainMenu);
 
 document.getElementById("coinShopButton").onclick=()=>{
   updateCoins();
@@ -2759,6 +2849,14 @@ function finishMatch(){
     resultTitle.className=
       "result-title result-draw";
   }
+
+  playerStats.matches++;
+  playerStats.goals+=blueScore;
+  if(result==="win")playerStats.wins++;
+  else if(result==="lose")playerStats.losses++;
+  else playerStats.draws++;
+  saveProfile();
+  updateProfileUI();
 
   addCoins(reward);
 
@@ -4776,6 +4874,7 @@ function playResultSound(result){
 ========================================================= */
 
 updateCoins();
+updateProfileUI();
 
 renderStore();
 
