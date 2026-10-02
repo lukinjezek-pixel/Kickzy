@@ -189,7 +189,11 @@ button{
   font-size:18px;
   font-weight:1000;
   cursor:pointer;
-  transition:.16s ease;
+  transition:
+    transform .22s ease,
+    background .28s ease,
+    border-color .28s ease,
+    box-shadow .28s ease;
   box-shadow:0 8px 25px #0003;
 }
 
@@ -202,7 +206,7 @@ button{
   height:100%;
   background:linear-gradient(90deg,transparent,#ffffff20,transparent);
   transform:skewX(-20deg);
-  transition:.4s;
+  transition:.55s cubic-bezier(.2,.8,.2,1);
 }
 
 .menu-btn:hover::after{
@@ -211,9 +215,11 @@ button{
 
 .menu-btn:hover{
   transform:translateY(-3px);
-  border-color:#ffffff35;
-  background:#ffffff13;
-  box-shadow:0 14px 35px #0006;
+  border-color:#ffffff55;
+  background:transparent;
+  box-shadow:
+    0 14px 35px #0006,
+    0 0 18px #ffffff12;
 }
 
 .menu-btn:active{
@@ -595,6 +601,160 @@ canvas{
   font-size:11px;
   font-weight:1000;
   cursor:pointer;
+  transition:.2s ease;
+}
+
+.pause-btn:hover{
+  background:transparent;
+  transform:translateY(-2px);
+  border-color:#ffffff55;
+}
+
+/* =========================
+   PAUSE MENU
+========================= */
+
+#pauseOverlay{
+  position:absolute;
+  inset:0;
+  z-index:45;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#020605b8;
+  backdrop-filter:blur(10px);
+}
+
+.pause-box{
+  width:min(430px,88vw);
+  padding:32px 25px;
+  border-radius:25px;
+  text-align:center;
+  background:radial-gradient(circle at 50% 0%,#244532,#101912 55%);
+  border:1px solid #ffffff20;
+  box-shadow:0 30px 100px #000b;
+  animation:pauseIn .25s ease-out;
+}
+
+@keyframes pauseIn{
+  from{opacity:0;transform:scale(.92) translateY(15px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+.pause-title{
+  font-size:42px;
+  font-weight:1000;
+  font-style:italic;
+  margin-bottom:22px;
+}
+
+.pause-box .menu-buttons{
+  gap:10px;
+}
+
+/* =========================
+   SETTINGS
+========================= */
+
+.settings-box{
+  width:min(520px,94vw);
+}
+
+.settings-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:17px 18px;
+  margin-bottom:10px;
+  border-radius:15px;
+  background:#ffffff09;
+  border:1px solid #ffffff14;
+}
+
+.settings-label{
+  text-align:left;
+}
+
+.settings-label strong{
+  display:block;
+  font-size:16px;
+}
+
+.settings-label small{
+  display:block;
+  margin-top:4px;
+  color:#ffffff55;
+  font-size:10px;
+}
+
+.toggle{
+  position:relative;
+  width:58px;
+  height:31px;
+  flex:0 0 auto;
+  border:0;
+  border-radius:999px;
+  background:#ffffff18;
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.toggle::after{
+  content:"";
+  position:absolute;
+  width:23px;
+  height:23px;
+  top:4px;
+  left:4px;
+  border-radius:50%;
+  background:#fff;
+  transition:.25s ease;
+}
+
+.toggle.on{
+  background:#4ca7ff;
+}
+
+.toggle.on::after{
+  transform:translateX(27px);
+}
+
+/* =========================
+   COIN SHOP PLACEHOLDER
+========================= */
+
+.coin-shop-box{
+  width:min(600px,94vw);
+}
+
+.coin-pack{
+  padding:17px;
+  margin-bottom:10px;
+  border-radius:15px;
+  background:#ffffff09;
+  border:1px solid #ffffff14;
+}
+
+.coin-pack strong{
+  font-size:21px;
+}
+
+.coin-pack small{
+  display:block;
+  margin:5px 0 12px;
+  color:#ffffff55;
+}
+
+.coming-soon{
+  display:inline-block;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#ffd84d18;
+  color:#ffd84d;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:1px;
 }
 
 /* =========================
@@ -813,11 +973,89 @@ canvas{
       <button class="menu-btn store-btn" id="storeButton">
         🛒 STORE
       </button>
+
+      <button class="menu-btn" id="coinShopButton">
+        🪙 GET COINS
+      </button>
+
+      <button class="menu-btn" id="settingsButton">
+        ⚙️ SETTINGS
+      </button>
     </div>
 
   </div>
 </div>
 
+
+<!-- =========================
+     SETTINGS
+========================= -->
+
+<div class="menu hidden" id="settingsMenu">
+  <div class="menu-box settings-box">
+
+    <div class="mode-title">SETTINGS</div>
+
+    <div class="settings-row">
+      <div class="settings-label">
+        <strong>🔊 SOUND EFFECTS</strong>
+        <small>Menu clicks, kicks, goals and match sounds</small>
+      </div>
+      <button class="toggle on" id="sfxToggle" aria-label="Toggle sound effects"></button>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-label">
+        <strong>🎵 MUSIC</strong>
+        <small>Background music setting</small>
+      </div>
+      <button class="toggle on" id="musicToggle" aria-label="Toggle music"></button>
+    </div>
+
+    <button class="menu-btn back-btn" id="settingsBack">
+      ← BACK
+    </button>
+
+  </div>
+</div>
+
+<!-- =========================
+     COIN SHOP
+========================= -->
+
+<div class="menu hidden" id="coinShopMenu">
+  <div class="menu-box coin-shop-box">
+
+    <div class="mode-title">GET COINS</div>
+
+    <div class="coin-display" style="margin:0 auto 22px">
+      🪙 <span id="coinShopAmount">0</span> COINS
+    </div>
+
+    <div class="coin-pack">
+      <strong>🪙 500 COINS</strong>
+      <small>Real-money purchase will be connected later.</small>
+      <span class="coming-soon">COMING SOON</span>
+    </div>
+
+    <div class="coin-pack">
+      <strong>🪙 1,200 COINS</strong>
+      <small>Real-money purchase will be connected later.</small>
+      <span class="coming-soon">COMING SOON</span>
+    </div>
+
+    <div class="coin-pack">
+      <strong>🪙 2,500 COINS</strong>
+      <small>Real-money purchase will be connected later.</small>
+      <span class="coming-soon">COMING SOON</span>
+    </div>
+
+    <button class="menu-btn back-btn" id="coinShopBack">
+      ← BACK
+    </button>
+
+  </div>
+</div>
 
 <!-- =========================
      MODE MENU
@@ -833,6 +1071,10 @@ canvas{
     <div class="mode-title">SELECT MODE</div>
 
     <div class="menu-buttons">
+
+      <button class="menu-btn quick-btn" id="quickMatchButton">
+        ⚡ QUICK MATCH
+      </button>
 
       <button class="menu-btn play-btn" id="botButton">
         🤖 PLAY VS BOT
@@ -904,10 +1146,6 @@ canvas{
     <div class="mode-title">
       ONLINE
     </div>
-
-    <button class="menu-btn quick-btn" id="quickMatchButton">
-      ⚡ QUICK MATCH
-    </button>
 
     <button class="menu-btn online-btn" id="createRoomButton">
       CREATE ROOM
@@ -1005,6 +1243,17 @@ canvas{
   <button class="pause-btn" id="menuButton">
     MENU
   </button>
+
+  <div id="pauseOverlay" class="hidden">
+    <div class="pause-box">
+      <div class="pause-title">PAUSED</div>
+      <div class="menu-buttons">
+        <button class="menu-btn play-btn" id="resumeButton">▶ RESUME</button>
+        <button class="menu-btn" id="restartButton">↻ RESTART</button>
+        <button class="menu-btn back-btn" id="quitButton">✕ QUIT TO MENU</button>
+      </div>
+    </div>
+  </div>
 
   <div id="goalText">
     GOAL!
@@ -1132,10 +1381,18 @@ const modeMenu=document.getElementById("modeMenu");
 const difficultyMenu=document.getElementById("difficultyMenu");
 const onlineMenu=document.getElementById("onlineMenu");
 const storeMenu=document.getElementById("storeMenu");
+const settingsMenu=document.getElementById("settingsMenu");
+const coinShopMenu=document.getElementById("coinShopMenu");
 const gameWrap=document.getElementById("gameWrap");
 const resultOverlay=document.getElementById("resultOverlay");
+const pauseOverlay=document.getElementById("pauseOverlay");
 
 let coins=Number(localStorage.getItem("kickzyCoins"))||0;
+
+let sfxEnabled=localStorage.getItem("kickzySfx")!=="off";
+let musicEnabled=localStorage.getItem("kickzyMusic")!=="off";
+let musicTimer=null;
+let musicStep=0;
 
 let ownedSkins;
 
@@ -1160,6 +1417,8 @@ function saveCoins(){
 function updateCoins(){
   document.getElementById("coinAmount").textContent=coins;
   document.getElementById("storeCoinAmount").textContent=coins;
+  const shopAmount=document.getElementById("coinShopAmount");
+  if(shopAmount)shopAmount.textContent=coins;
 }
 
 function saveSkinData(){
@@ -1179,6 +1438,8 @@ function showOnly(el){
     difficultyMenu,
     onlineMenu,
     storeMenu,
+    settingsMenu,
+    coinShopMenu,
     gameWrap
   ].forEach(x=>x.classList.add("hidden"));
 
@@ -1205,6 +1466,8 @@ function audio(){
 }
 
 function sound(freq,duration=.06,type="sine",volume=.035){
+  if(!sfxEnabled)return;
+
   try{
     const a=audio();
 
@@ -1236,6 +1499,7 @@ function hoverSound(){
 document.addEventListener("click",e=>{
   if(e.target.closest("button")){
     clickSound();
+    if(musicEnabled&&!musicTimer)startMusic();
   }
 });
 
@@ -1396,6 +1660,70 @@ function renderStore(){
 
 
 /* =========================================================
+   SETTINGS
+========================================================= */
+
+function updateSettingsUI(){
+  document.getElementById("sfxToggle").classList.toggle("on",sfxEnabled);
+  document.getElementById("musicToggle").classList.toggle("on",musicEnabled);
+}
+
+function playMusicNote(){
+  if(!musicEnabled)return;
+
+  try{
+    const a=audio();
+    const notes=[220,277.18,329.63,369.99,440,329.63,277.18,246.94];
+    const o=a.createOscillator();
+    const g=a.createGain();
+
+    o.type="sine";
+    o.frequency.value=notes[musicStep%notes.length];
+    g.gain.setValueAtTime(.0001,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.018,a.currentTime+.04);
+    g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.42);
+
+    o.connect(g);
+    g.connect(a.destination);
+    o.start();
+    o.stop(a.currentTime+.45);
+
+    musicStep++;
+  }catch{}
+}
+
+function startMusic(){
+  if(!musicEnabled||musicTimer)return;
+  playMusicNote();
+  musicTimer=setInterval(playMusicNote,480);
+}
+
+function stopMusic(){
+  if(musicTimer){
+    clearInterval(musicTimer);
+    musicTimer=null;
+  }
+}
+
+document.getElementById("sfxToggle").onclick=()=>{
+  sfxEnabled=!sfxEnabled;
+  localStorage.setItem("kickzySfx",sfxEnabled?"on":"off");
+  updateSettingsUI();
+};
+
+document.getElementById("musicToggle").onclick=()=>{
+  musicEnabled=!musicEnabled;
+  localStorage.setItem("kickzyMusic",musicEnabled?"on":"off");
+
+  if(musicEnabled)startMusic();
+  else stopMusic();
+
+  updateSettingsUI();
+};
+
+updateSettingsUI();
+
+/* =========================================================
    STORE NAV
 ========================================================= */
 
@@ -1409,7 +1737,25 @@ document.getElementById("storeButton").onclick=()=>{
   showOnly(storeMenu);
 };
 
+document.getElementById("settingsButton").onclick=()=>{
+  updateSettingsUI();
+  showOnly(settingsMenu);
+};
+
+document.getElementById("coinShopButton").onclick=()=>{
+  updateCoins();
+  showOnly(coinShopMenu);
+};
+
 document.getElementById("storeBack").onclick=()=>{
+  showOnly(mainMenu);
+};
+
+document.getElementById("settingsBack").onclick=()=>{
+  showOnly(mainMenu);
+};
+
+document.getElementById("coinShopBack").onclick=()=>{
   showOnly(mainMenu);
 };
 
@@ -1444,6 +1790,7 @@ let botDifficulty="normal";
 
 let gameStarted=false;
 let matchFinished=false;
+let gamePaused=false;
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
@@ -1692,7 +2039,6 @@ let connection=null;
 
 let onlineHost=false;
 let onlineConnected=false;
-let quickMatchActive=false;
 
 let remoteInput={
   up:false,
@@ -2403,20 +2749,57 @@ function finishMatch(){
 
 document.getElementById("menuButton").onclick=()=>{
 
-  gameStarted=false;
-  matchFinished=false;
+  if(!gameStarted||matchFinished)return;
+
+  gamePaused=true;
+  pauseOverlay.classList.remove("hidden");
+};
+
+document.getElementById("resumeButton").onclick=()=>{
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
+  lastTime=performance.now();
+};
+
+document.getElementById("restartButton").onclick=()=>{
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
 
   clearTimeout(goalRestartTimer);
 
+  matchFinished=false;
+  gameStarted=true;
+  blueScore=0;
+  redScore=0;
+  matchTime=120;
+  scoreElement.textContent="0 - 0";
+  timerElement.textContent="02:00";
+  particles=[];
+  shake=0;
+  goalInProgress=false;
+  resetPositions();
+  lastTime=performance.now();
+
+  if(gameMode==="online"&&onlineHost){
+    sendNetworkState();
+  }
+};
+
+document.getElementById("quitButton").onclick=()=>{
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
+  gameStarted=false;
+  matchFinished=false;
+  clearTimeout(goalRestartTimer);
   disconnectOnline();
-
   resultOverlay.classList.add("hidden");
-
   showOnly(mainMenu);
 };
 
 document.getElementById("resultMenuButton").onclick=()=>{
 
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
   gameStarted=false;
   matchFinished=false;
 
@@ -3569,18 +3952,14 @@ function createRoom(){
   document.getElementById(
     "onlineStatus"
   ).textContent=
-    quickMatchActive
-    ?"Quick Match: waiting for an opponent..."
-    :"Waiting for another player...";
+    "Waiting for another player...";
 
   peer.on("open",()=>{
 
     document.getElementById(
       "onlineStatus"
     ).textContent=
-      quickMatchActive
-      ?"Quick Match is searching for an opponent..."
-      :"Room created! Send the code to your friend.";
+      "Room created! Send the code to your friend.";
   });
 
 
@@ -3698,6 +4077,8 @@ function startOnlineHostGame(){
   gameMode="online";
   gameStarted=true;
   matchFinished=false;
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
 
   blueScore=0;
   redScore=0;
@@ -3708,9 +4089,7 @@ function startOnlineHostGame(){
   resultOverlay.classList.add("hidden");
 
   gameModeLabel.textContent=
-    quickMatchActive
-    ?"QUICK MATCH • HOST"
-    :"ONLINE • HOST";
+    "ONLINE • HOST";
 
   showOnly(gameWrap);
 
@@ -3756,22 +4135,12 @@ document.getElementById(
   "onlineButton"
 ).onclick=()=>{
 
-  disconnectOnline();
-
   showOnly(onlineMenu);
-
-  document.getElementById(
-    "roomCodeBox"
-  ).classList.add("hidden");
-
-  document.getElementById(
-    "roomInput"
-  ).value="";
 
   document.getElementById(
     "onlineStatus"
   ).textContent=
-    "Choose Quick Match, create a room, or join a friend.";
+    "Create a room or join a friend.";
 
 };
 
@@ -3789,7 +4158,6 @@ document.getElementById(
 document.getElementById(
   "createRoomButton"
 ).onclick=()=>{
-  quickMatchActive=false;
   createRoom();
 };
 
@@ -3797,68 +4165,23 @@ document.getElementById(
 document.getElementById(
   "joinRoomButton"
 ).onclick=()=>{
-  quickMatchActive=false;
   joinRoom();
 };
 
 
 /* =========================================================
-   QUICK MATCH
+   NORMAL GAME START
 ========================================================= */
-
-/*
-   Quick Match is part of PLAY ONLINE.
-   It starts an automatically created online room, so the player
-   does not have to choose a room code manually. The generated
-   code is shown while waiting for an opponent.
-*/
 
 document.getElementById(
   "quickMatchButton"
 ).onclick=()=>{
 
-  startQuickMatch();
+  gameMode="bot";
+  botDifficulty="normal";
+
+  startGame();
 };
-
-
-function startQuickMatch(){
-
-  if(typeof Peer==="undefined"){
-
-    document.getElementById(
-      "onlineStatus"
-    ).textContent=
-      "Online service could not load.";
-
-    return;
-  }
-
-  disconnectOnline();
-  quickMatchActive=true;
-
-  document.getElementById(
-    "roomCodeBox"
-  ).classList.remove("hidden");
-
-  document.getElementById(
-    "roomInput"
-  ).value="";
-
-  document.getElementById(
-    "onlineStatus"
-  ).textContent=
-    "Finding an opponent...";
-
-  createRoom();
-
-  /* createRoom() generates the room automatically.
-     Keep the status focused on Quick Match. */
-  const status=
-    document.getElementById("onlineStatus");
-
-  status.textContent=
-    "Quick Match is ready. Waiting for an opponent...";
-}
 
 
 document.getElementById(
@@ -3905,6 +4228,8 @@ function startGame(){
 
   gameStarted=true;
   matchFinished=false;
+  gamePaused=false;
+  pauseOverlay.classList.add("hidden");
 
   resultOverlay.classList.add("hidden");
 
@@ -3949,6 +4274,11 @@ function startGame(){
 function update(dt){
 
   if(!gameStarted)return;
+
+  if(gamePaused){
+    updateParticles(dt);
+    return;
+  }
 
   if(matchFinished){
 
