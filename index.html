@@ -191,8 +191,6 @@ button{
   cursor:pointer;
   transition:
     transform .22s ease,
-    background .28s ease,
-    border-color .28s ease,
     box-shadow .28s ease;
   box-shadow:0 8px 25px #0003;
 }
@@ -215,8 +213,6 @@ button{
 
 .menu-btn:hover{
   transform:translateY(-3px);
-  border-color:#ffffff55;
-  background:transparent;
   box-shadow:
     0 14px 35px #0006,
     0 0 18px #ffffff12;
@@ -2338,7 +2334,7 @@ function moveBot(dt){
     bd<
     red.radius+
     ball.radius+
-    32&&
+    6&&
     red.kickCooldown<=0&&
     botKickTimer<=0
   ){
