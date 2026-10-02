@@ -1597,13 +1597,13 @@ function previewStyle(s){
     gold:`background:linear-gradient(135deg,#fff5a8,#ffd84d 35%,#9b6500)`,
     diamond:`background:linear-gradient(135deg,#fff,#d9ffff 35%,#62baff,#fff)`,
     royal:`background:linear-gradient(135deg,#fff1a1,#ffcc4d 35%,#542500)`,
-    rainbow:`background:conic-gradient(#ff3b3b,#ffd83d,#45ff75,#44caff,#9b4dff,#ff3b3b)`,
+    rainbow:`background:conic-gradient(from 0deg,#ff3b3b,#ffd83d,#45ff75,#44caff,#9b4dff,#ff3b3b);box-shadow:0 0 18px #ff55cc`,
     star:`background:radial-gradient(circle,#fff 0 15%,#fff7a0 17%,#675600 45%,#111)`,
     energy:`background:radial-gradient(circle,#fff,#55ffff 25%,#006c82 60%,#001b24)`,
     phoenix:`background:linear-gradient(145deg,#fff36d,#ff632e 40%,#6b0010)`,
     celestial:`background:radial-gradient(circle,#fff,#fff0a3 25%,#9274ff 60%,#130b36)`,
     reaper:`background:radial-gradient(circle,#000 20%,#8b62ff 45%,#100021 70%)`,
-    ultimate:`background:conic-gradient(#ff4d4d,#ffd84d,#4dff88,#4ddfff,#7d4dff,#ff4dca,#ff4d4d)`
+    ultimate:`background:radial-gradient(circle at 50% 45%,#ffffff 0 8%,#ffe66d 9% 18%,#ff4dca 19% 35%,#5c2cff 36% 58%,#080014 59%);box-shadow:0 0 26px #7d4dff,0 0 8px #fff`
   };
 
   return map[s.type]||`background:${c}`;
@@ -3358,21 +3358,15 @@ function drawSkinPattern(s,p){
   }
 
 
-  if(
-    [
-      "rainbow",
-      "prism",
-      "hologram",
-      "ultimate"
-    ].includes(s.type)
-  ){
+  if(s.type==="rainbow"){
 
+    // Rainbow: a clean rotating rainbow ring
     ctx.beginPath();
 
     ctx.arc(
       x,
       y,
-      r+8,
+      r-3,
       0,
       Math.PI*2
     );
@@ -3380,8 +3374,71 @@ function drawSkinPattern(s,p){
     ctx.strokeStyle=
       `hsl(${(t*100)%360},100%,65%)`;
 
-    ctx.lineWidth=5;
+    ctx.lineWidth=6;
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x,y,r*.55,0,Math.PI*2);
+    ctx.strokeStyle=`hsl(${(t*100+160)%360},100%,75%)`;
+    ctx.lineWidth=2;
+    ctx.globalAlpha=.8;
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  if(s.type==="ultimate"){
+
+    // KICKZY Ultimate: dark cosmic core + rotating rainbow blades
+    const grad=ctx.createRadialGradient(
+      x-r*.25,y-r*.25,2,
+      x,y,r
+    );
+
+    grad.addColorStop(0,"#ffffff");
+    grad.addColorStop(.16,"#ffe66d");
+    grad.addColorStop(.38,"#ff4dca");
+    grad.addColorStop(.68,"#5c2cff");
+    grad.addColorStop(1,"#090014");
+
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fill();
+
+    for(let i=0;i<8;i++){
+      const a=t*.8+i*Math.PI/4;
+      const inner=r*.72;
+      const outer=r*1.15;
+
+      ctx.beginPath();
+      ctx.moveTo(
+        x+Math.cos(a)*inner,
+        y+Math.sin(a)*inner
+      );
+      ctx.lineTo(
+        x+Math.cos(a+.10)*outer,
+        y+Math.sin(a+.10)*outer
+      );
+      ctx.lineTo(
+        x+Math.cos(a-.10)*outer,
+        y+Math.sin(a-.10)*outer
+      );
+      ctx.closePath();
+
+      ctx.fillStyle=`hsl(${(i*45+t*80)%360},100%,65%)`;
+      ctx.globalAlpha=.9;
+      ctx.fill();
+    }
+
+    ctx.globalAlpha=1;
+
+    ctx.beginPath();
+    ctx.arc(x,y,r*.38,0,Math.PI*2);
+    ctx.strokeStyle="#fff";
+    ctx.lineWidth=2;
+    ctx.globalAlpha=.9;
+    ctx.stroke();
+    ctx.globalAlpha=1;
   }
 
 
