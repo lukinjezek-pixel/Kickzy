@@ -209,6 +209,10 @@ button{
 .profile-button:hover{transform:translateY(-2px);border-color:#4ca7ff66;box-shadow:0 12px 30px #0008,0 0 18px #4ca7ff22}
 .profile-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#4ca7ff,#2465b7);border:2px solid #ffffffaa;font-size:17px;font-weight:1000}
 .profile-name-small{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:1000}
+.verified-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:5px;border-radius:50%;background:#1687ff;color:#fff;font-size:11px;font-weight:1000;box-shadow:0 0 10px #1687ff88;vertical-align:middle;animation:verifiedPulse 2s ease-in-out infinite}
+@keyframes verifiedPulse{0%,100%{box-shadow:0 0 8px #1687ff66;transform:scale(1)}50%{box-shadow:0 0 16px #1687ffaa;transform:scale(1.08)}}
+.profile-verified{display:inline-flex;align-items:center;gap:6px;margin-top:5px;color:#62b4ff;font-size:11px;font-weight:1000;letter-spacing:1px}
+.profile-verified .verified-badge{margin-left:0;width:20px;height:20px;font-size:12px}
 .profile-box{max-width:620px}
 .profile-card{margin:0 auto 20px;padding:18px;border-radius:20px;background:#ffffff09;border:1px solid #ffffff18;box-shadow:0 15px 40px #0005}
 .profile-head{display:flex;align-items:center;gap:15px;text-align:left}
@@ -998,7 +1002,7 @@ canvas{
 
   <button class="profile-button" id="profileButton" aria-label="Open profile">
     <span class="profile-avatar" id="profileAvatar">P</span>
-    <span class="profile-name-small" id="profileNameSmall">Player</span>
+    <span class="profile-name-small" id="profileNameSmall">Player <span class="verified-badge" aria-label="Verified KICKZY Owner">✓</span></span>
   </button>
 
   <div class="menu-box">
@@ -1049,7 +1053,7 @@ canvas{
     <div class="profile-card">
       <div class="profile-head">
         <div class="profile-avatar-large" id="profileAvatarLarge">P</div>
-        <div class="profile-name-area"><small>YOUR PLAYER</small><strong id="profileNameDisplay">Player</strong></div>
+        <div class="profile-name-area"><small>YOUR PLAYER</small><strong id="profileNameDisplay">Player</strong><div class="profile-verified"><span class="verified-badge">✓</span> KICKZY OWNER</div></div>
       </div>
       <div class="profile-edit"><input id="profileNameInput" type="text" maxlength="16" placeholder="Enter your name"><button id="profileSaveButton">SAVE</button></div>
       <div class="profile-stats">
@@ -1493,9 +1497,13 @@ let playerStats;
 try{playerStats=JSON.parse(localStorage.getItem("kickzyPlayerStats")||"null")}catch{playerStats=null}
 if(!playerStats||typeof playerStats!=="object")playerStats={matches:0,wins:0,losses:0,draws:0,goals:0};
 function saveProfile(){localStorage.setItem("kickzyPlayerName",playerName);localStorage.setItem("kickzyPlayerStats",JSON.stringify(playerStats))}
+function escapeHtml(value){
+  return String(value).replace(/[&<>\"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+}
+
 function updateProfileUI(){
   const name=playerName||"Player", initial=name.trim().charAt(0).toUpperCase()||"P";
-  document.getElementById("profileNameSmall").textContent=name;
+  document.getElementById("profileNameSmall").innerHTML=`${escapeHtml(name)} <span class="verified-badge" aria-label="Verified KICKZY Owner">✓</span>`;
   document.getElementById("profileNameDisplay").textContent=name;
   document.getElementById("profileAvatar").textContent=initial;
   document.getElementById("profileAvatarLarge").textContent=initial;
