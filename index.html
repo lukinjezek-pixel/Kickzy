@@ -3946,6 +3946,121 @@ function drawSkinPattern(s,p){
     ctx.stroke();
   }
 
+  /* =======================================================
+     SIGNATURE SKIN DETAILS
+     Every skin gets a clearly visible identity in-game,
+     instead of looking like only a recolored player.
+  ======================================================= */
+  if(s.type!=="ownerRoyal"){
+    const signatures={
+      neon:["#bff3ff",2],stripes:["#fff",7],lime:["#eaffb5",3],ice:["#fff",3],
+      orange:["#fff2df",4],violet:["#f2e7ff",3],aqua:["#d9ffff",3],pink:["#fff",3],
+      camo:["#dce8dc",4],checker:["#fff",3],lava:["#fff",4],toxic:["#eaffb5",3],
+      ocean:["#bfeaff",3],sunset:["#fff0df",4],grid:["#d9ffff",2],electric:["#fff",4],
+      shadow:["#b9c4d8",3],storm:["#fff",3],galaxy:["#fff",2],circuit:["#cffff0",2],
+      plasma:["#fff",3],dragon:["#fff",3],matrix:["#d8ffdf",2],solar:["#fff",4],
+      moon:["#fff",3],glitch:["#fff",3],firefly:["#fff",3],venom:["#efffd8",3],
+      prism:["#fff",3],samurai:["#fff",4],void:["#e7dcff",3],inferno:["#fff",4],
+      frostbite:["#fff",3],hologram:["#fff",2],blackhole:["#fff",2],thunder:["#fff",4],
+      aurora:["#fff",2],spectral:["#fff",2],redshift:["#fff",4],cosmic:["#fff",2],
+      gold:["#fff8c7",4],diamond:["#fff",3],royal:["#fff4bd",4],rainbow:["#fff",3],
+      star:["#fff",3],energy:["#fff",3],phoenix:["#fff",4],celestial:["#fff",3],
+      reaper:["#fff",4],ultimate:["#fff",3]
+    };
+
+    const sig=signatures[s.type]||["#fff",3];
+    const angle=((s.id||"").length*0.47)%Math.PI;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x,y,r*.72,0,Math.PI*2);
+    ctx.clip();
+
+    /* strong diagonal signature bands */
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle);
+    ctx.strokeStyle=sig[0];
+    ctx.globalAlpha=.72;
+    ctx.lineWidth=sig[1];
+    for(let i=-2;i<=2;i++){
+      ctx.beginPath();
+      ctx.moveTo(-r*1.5+i*r*.62,-r*1.25);
+      ctx.lineTo(-r*.2+i*r*.62,r*1.25);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    /* center badge / core */
+    ctx.globalAlpha=.95;
+    ctx.beginPath();
+    ctx.arc(x,y,r*.25,0,Math.PI*2);
+    ctx.fillStyle="#00000038";
+    ctx.fill();
+    ctx.strokeStyle=sig[0];
+    ctx.lineWidth=1.8;
+    ctx.stroke();
+
+    /* three small signature dots */
+    ctx.fillStyle=sig[0];
+    for(let i=0;i<3;i++){
+      const a=-Math.PI/2+i*Math.PI;
+      ctx.beginPath();
+      ctx.arc(x+Math.cos(a)*r*.52,y+Math.sin(a)*r*.52,1.7,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }else{
+    /* OWNER ROYAL: unmistakable owner-only design */
+    ctx.save();
+
+    const grad=ctx.createLinearGradient(x-r,y-r,x+r,y+r);
+    grad.addColorStop(0,"#fff4a8");
+    grad.addColorStop(.28,"#ffd34f");
+    grad.addColorStop(.55,"#9c5cff");
+    grad.addColorStop(1,"#3b166d");
+    ctx.beginPath();
+    ctx.arc(x,y,r*.98,0,Math.PI*2);
+    ctx.fillStyle=grad;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x,y,r*.78,0,Math.PI*2);
+    ctx.strokeStyle="#fff6b8";
+    ctx.lineWidth=2;
+    ctx.shadowBlur=10;
+    ctx.shadowColor="#ffd84d";
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    /* crown */
+    ctx.fillStyle="#ffe36a";
+    ctx.strokeStyle="#fff8c9";
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(x-r*.55,y-r*.48);
+    ctx.lineTo(x-r*.28,y-r*.78);
+    ctx.lineTo(x,y-r*.52);
+    ctx.lineTo(x+r*.28,y-r*.78);
+    ctx.lineTo(x+r*.55,y-r*.48);
+    ctx.lineTo(x+r*.42,y-r*.18);
+    ctx.lineTo(x-r*.42,y-r*.18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    /* OWNER lettering */
+    ctx.fillStyle="#fff";
+    ctx.font=`900 ${Math.max(5,Math.floor(r*.42))}px Arial`;
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.shadowBlur=5;
+    ctx.shadowColor="#3b166d";
+    ctx.fillText("OWNER",x,y+r*.27);
+    ctx.shadowBlur=0;
+
+    ctx.restore();
+  }
 
   ctx.restore();
 }
