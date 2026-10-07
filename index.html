@@ -998,7 +998,26 @@ canvas{
 .progress-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.progress-mini{padding:12px;border-radius:13px;background:#0004;border:1px solid #ffffff10}.progress-mini strong{display:block;font-size:13px}.progress-mini small{display:block;margin-top:4px;color:#ffffff66;font-size:9px;line-height:1.35}.achievement-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.achievement-chip{padding:7px 9px;border-radius:999px;background:#ffffff09;border:1px solid #ffffff12;color:#ffffff55;font-size:9px;font-weight:1000}.achievement-chip.unlocked{background:#ffd84d16;border-color:#ffd84d55;color:#ffd84d}.daily-done{color:#55e39a!important}.daily-progress{color:#65c0ff!important}
 @media(max-width:600px){.progress-grid{grid-template-columns:1fr}.progress-card{padding:14px}}
 
+
+/* =========================
+   GOOGLE ACCOUNT
+========================= */
+.auth-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.auth-btn{border:1px solid #ffffff22;background:#ffffff0b;color:#fff;border-radius:14px;padding:11px 16px;font-weight:900;letter-spacing:.4px;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.auth-btn:hover{transform:translateY(-2px);background:#ffffff12;border-color:#ffffff35}
+.auth-btn.google{background:#fff;color:#111;border-color:#fff}
+.auth-btn.google:hover{background:#f1f1f1}
+.auth-btn.logout{background:#ff4f5f12;border-color:#ff4f5f44;color:#ffb0b7}
+.auth-status{font-size:11px;color:#ffffff88;text-align:center;min-height:16px;margin-top:7px}
+.account-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#ffffff09;border:1px solid #ffffff14;font-size:10px;color:#fff9;max-width:100%;overflow:hidden}
+.account-chip strong{color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 </style>
+
+<!-- Firebase Authentication -->
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+
 </head>
 
 <body>
@@ -1015,6 +1034,12 @@ canvas{
     <span class="profile-avatar" id="profileAvatar">P</span>
     <span class="profile-name-small" id="profileNameSmall">Player</span>
   </button>
+
+  <div class="auth-row" id="mainAuthRow">
+    <button class="auth-btn google" id="googleSignInButton">🔐 SIGN IN WITH GOOGLE</button>
+    <button class="auth-btn logout hidden" id="googleSignOutButton">SIGN OUT</button>
+  </div>
+  <div class="auth-status" id="authStatus"></div>
 
   <div class="menu-box">
 
@@ -1066,6 +1091,11 @@ canvas{
         <div class="profile-avatar-large" id="profileAvatarLarge">P</div>
         <div class="profile-name-area"><small>YOUR PLAYER</small><strong id="profileNameDisplay">Player</strong><div id="ownerBadgeArea"></div></div>
       </div>
+      <div class="auth-row" style="margin-bottom:10px">
+        <button class="auth-btn google" id="profileGoogleSignInButton">🔐 SIGN IN WITH GOOGLE</button>
+        <button class="auth-btn logout hidden" id="profileGoogleSignOutButton">SIGN OUT</button>
+      </div>
+      <div class="auth-status" id="profileAuthStatus"></div>
       <div class="profile-edit"><input id="profileNameInput" type="text" maxlength="16" placeholder="Enter your name"><button id="profileSaveButton">SAVE</button></div>
       <div class="progress-card">
         <div class="progress-top">
@@ -1519,9 +1549,85 @@ let playerStats;
 try{playerStats=JSON.parse(localStorage.getItem("kickzyPlayerStats")||"null")}catch{playerStats=null}
 if(!playerStats||typeof playerStats!=="object")playerStats={matches:0,wins:0,losses:0,draws:0,goals:0};
 
-/* Progression is local to this browser. The owner badge is intentionally NOT
-   granted by player name, so every visitor does not automatically become owner.
-   To mark your own browser as the owner, set kickzyOwnerLocal to 1 once. */
+/* Google account / Owner identity.
+   The badge is based on the authenticated Firebase Google account, not the
+   player's editable display name. */
+const KICKZY_OWNER_EMAIL="lukinjezek@gmail.com";
+let firebaseApp=null;
+let firebaseAuth=null;
+let firebaseUser=null;
+
+function initFirebaseAuth(){
+  try{
+    firebaseApp=firebase.initializeApp({
+      apiKey:"AIzaSyA60vzZItHJg7-gjYUyLVXP1mNHaEfWTdQ",
+      authDomain:"kickzy-249ee.firebaseapp.com",
+      projectId:"kickzy-249ee",
+      storageBucket:"kickzy-249ee.firebasestorage.app",
+      messagingSenderId:"792609749002",
+      appId:"1:792609749002:web:1a817538f15e66460c07f3",
+      measurementId:"G-WJNH1YZNXX"
+    });
+    firebaseAuth=firebase.auth();
+    firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+    firebaseAuth.onAuthStateChanged(user=>{
+      firebaseUser=user||null;
+      if(user && (!localStorage.getItem("kickzyPlayerName") || localStorage.getItem("kickzyPlayerName")==="Player")){
+        if(user.displayName) playerName=user.displayName.slice(0,16);
+        saveProfile();
+      }
+      updateAuthUI();
+      updateProfileUI();
+    });
+  }catch(err){
+    console.error("Firebase initialization failed",err);
+    setAuthStatus("Google login is unavailable right now.");
+  }
+}
+
+function isKickzyOwner(){
+  return !!firebaseUser && !!firebaseUser.email && firebaseUser.email.toLowerCase()===KICKZY_OWNER_EMAIL.toLowerCase();
+}
+
+function setAuthStatus(message){
+  const a=document.getElementById("authStatus");
+  const b=document.getElementById("profileAuthStatus");
+  if(a)a.textContent=message||"";
+  if(b)b.textContent=message||"";
+}
+
+async function signInWithGoogle(){
+  if(!firebaseAuth){setAuthStatus("Google login is still loading...");return;}
+  try{
+    const provider=new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:"select_account"});
+    await firebaseAuth.signInWithPopup(provider);
+  }catch(err){
+    console.error(err);
+    setAuthStatus(err&&err.code==="auth/popup-closed-by-user"?"Login cancelled.":"Google login failed. Check Firebase Authorized Domains.");
+  }
+}
+
+async function signOutGoogle(){
+  if(!firebaseAuth)return;
+  try{await firebaseAuth.signOut();setAuthStatus("Signed out.");}
+  catch(err){console.error(err);setAuthStatus("Could not sign out.");}
+}
+
+function updateAuthUI(){
+  const signedIn=!!firebaseUser;
+  const signInButtons=[document.getElementById("googleSignInButton"),document.getElementById("profileGoogleSignInButton")];
+  const signOutButtons=[document.getElementById("googleSignOutButton"),document.getElementById("profileGoogleSignOutButton")];
+  signInButtons.forEach(b=>{if(b)b.classList.toggle("hidden",signedIn)});
+  signOutButtons.forEach(b=>{if(b)b.classList.toggle("hidden",!signedIn)});
+  if(signedIn){
+    const label=isKickzyOwner()?"Signed in • KICKZY OWNER":"Signed in";
+    setAuthStatus(label);
+  }else if(firebaseAuth){
+    setAuthStatus("Not signed in");
+  }
+}
+
 let xpState;
 try{xpState=JSON.parse(localStorage.getItem("kickzyProgress")||"null")}catch{xpState=null}
 if(!xpState||typeof xpState!=="object")xpState={xp:0,level:1,unlocked:[],daily:{date:"",id:"",progress:0,done:false}};
@@ -1597,7 +1703,7 @@ function escapeHtml(value){
 
 function updateProfileUI(){
   const name=playerName||"Player", initial=name.trim().charAt(0).toUpperCase()||"P";
-  const owner=localStorage.getItem("kickzyOwnerLocal")==="1";
+  const owner=isKickzyOwner();
   document.getElementById("profileNameSmall").innerHTML=escapeHtml(name)+(owner?' <span class="verified-badge" aria-label="Verified KICKZY Owner">✓</span>':'');
   document.getElementById("profileNameDisplay").textContent=name;
   document.getElementById("ownerBadgeArea").innerHTML=owner?'<div class="profile-verified"><span class="verified-badge">✓</span> KICKZY OWNER</div>':'';
@@ -4979,9 +5085,19 @@ function playResultSound(result){
 
 
 /* =========================================================
+   GOOGLE AUTH EVENTS
+========================================================= */
+
+document.getElementById("googleSignInButton").onclick=signInWithGoogle;
+document.getElementById("profileGoogleSignInButton").onclick=signInWithGoogle;
+document.getElementById("googleSignOutButton").onclick=signOutGoogle;
+document.getElementById("profileGoogleSignOutButton").onclick=signOutGoogle;
+
+/* =========================================================
    INITIALIZE
 ========================================================= */
 
+initFirebaseAuth();
 updateCoins();
 updateProfileUI();
 
