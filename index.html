@@ -220,7 +220,7 @@ button{
 .profile-name-area{flex:1}.profile-name-area small{display:block;margin-bottom:5px;color:#ffffff66;font-size:11px;font-weight:900;letter-spacing:2px}.profile-name-area strong{display:block;font-size:26px}
 .profile-edit{display:flex;gap:9px;margin-top:18px}.profile-edit input{min-width:0;flex:1;padding:12px 14px;border:1px solid #ffffff20;border-radius:12px;outline:none;background:#0005;color:#fff}.profile-edit button{padding:0 18px;border:1px solid #4ca7ff55;border-radius:12px;background:#176dcc;color:#fff;font-weight:1000;cursor:pointer}
 .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.profile-stat{padding:13px 8px;border-radius:14px;background:#0004;border:1px solid #ffffff10}.profile-stat strong{display:block;font-size:20px}.profile-stat span{display:block;margin-top:3px;color:#ffffff66;font-size:10px;font-weight:900;letter-spacing:1px}
-@media(max-width:600px){.top-auth{top:12px;right:128px}.top-auth .auth-btn{padding:8px 10px;font-size:10px}.profile-button{top:12px;right:12px;padding:7px}.profile-name-small{display:none}.profile-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.profile-button{top:12px;right:12px;padding:7px}.profile-name-small{display:none}.profile-stats{grid-template-columns:repeat(2,1fr)}}
 
 /* =========================
    BUTTONS
@@ -1000,12 +1000,15 @@ canvas{
 
 
 /* =========================
+   XP + DAILY TOAST
+========================= */
+.result-xp{margin:14px auto 8px;padding:11px 18px;border-radius:14px;background:#7c5cff12;border:1px solid #9b7cff44;color:#cdbfff;font-weight:1000;font-size:24px;box-shadow:0 0 22px #7c5cff18}.result-xp small{display:block;margin-top:3px;color:#ffffff66;font-size:9px;letter-spacing:1.5px}.daily-toast{position:fixed;top:22px;left:50%;z-index:200;display:flex;align-items:center;gap:13px;width:min(430px,calc(100vw - 28px));padding:14px 16px;border:1px solid #55e39a55;border-radius:17px;background:linear-gradient(135deg,#10251bfa,#0b1510f8);box-shadow:0 18px 55px #0009,0 0 30px #55e39a22;transform:translate(-50%,-140%);opacity:0;pointer-events:none}.daily-toast.show{animation:dailyToastIn .35s ease-out forwards}.daily-toast-icon{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#55e39a;color:#06130b;font-weight:1000;font-size:22px;box-shadow:0 0 18px #55e39a66}.daily-toast-content{display:flex;flex-direction:column;gap:3px;text-align:left}.daily-toast-content strong{font-size:12px;letter-spacing:1px;color:#55e39a}.daily-toast-content span{font-size:13px;color:#fff;font-weight:800}.daily-toast-content b{font-size:11px;color:#ffd84d}@keyframes dailyToastIn{0%{transform:translate(-50%,-140%);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+@media(max-width:600px){.daily-toast{top:12px}.result-xp{font-size:21px}}
+
+/* =========================
    GOOGLE ACCOUNT
 ========================= */
 .auth-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
-.top-auth{position:fixed;top:20px;right:190px;z-index:21;display:flex;align-items:center;gap:7px}
-.top-auth .auth-btn{padding:9px 13px;border-radius:999px;font-size:11px;white-space:nowrap;box-shadow:0 8px 25px #0006}
-.top-auth .auth-status{display:none}
 .auth-btn{border:1px solid #ffffff22;background:#ffffff0b;color:#fff;border-radius:14px;padding:11px 16px;font-weight:900;letter-spacing:.4px;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease}
 .auth-btn:hover{transform:translateY(-2px);background:#ffffff12;border-color:#ffffff35}
 .auth-btn.google{background:#fff;color:#111;border-color:#fff}
@@ -1026,12 +1029,6 @@ canvas{
 <body>
 
 <div id="app">
-<div class="top-auth" id="topAuthRow">
-  <button class="auth-btn google" id="googleSignInButton">🔐 GOOGLE</button>
-  <button class="auth-btn logout hidden" id="googleSignOutButton">SIGN OUT</button>
-  <div class="auth-status" id="authStatus"></div>
-</div>
-
 
 <!-- =========================
      MAIN MENU
@@ -1043,7 +1040,6 @@ canvas{
     <span class="profile-avatar" id="profileAvatar">P</span>
     <span class="profile-name-small" id="profileNameSmall">Player</span>
   </button>
-
 
   <div class="menu-box">
 
@@ -1426,6 +1422,11 @@ canvas{
         0 - 0
       </div>
 
+      <div class="result-xp">
+        <span id="resultXp">+0</span>
+        <small>XP EARNED</small>
+      </div>
+
       <div class="result-coins">
         <span class="coin-symbol" aria-hidden="true"></span> <span id="resultCoins">+50</span>
         <small>COINS</small>
@@ -1441,6 +1442,16 @@ canvas{
 
 </div>
 
+</div>
+
+<!-- DAILY CHALLENGE TOAST -->
+<div id="dailyToast" class="daily-toast hidden" aria-live="polite">
+  <div class="daily-toast-icon">✓</div>
+  <div class="daily-toast-content">
+    <strong>DAILY CHALLENGE COMPLETED</strong>
+    <span id="dailyToastText">Challenge complete!</span>
+    <b id="dailyToastReward">+50 XP  •  +50 COINS</b>
+  </div>
 </div>
 
 
@@ -1506,7 +1517,8 @@ const skins = [
 {id:"phoenix",name:"Phoenix",rarity:"Legendary",price:1500,type:"phoenix",c:"#ff632e"},
 {id:"celestial",name:"Celestial",rarity:"Legendary",price:1500,type:"celestial",c:"#fff0a3"},
 {id:"reaper",name:"Dark Reaper",rarity:"Legendary",price:1500,type:"reaper",c:"#8b62ff"},
-{id:"ultimate",name:"KICKZY Ultimate",rarity:"Legendary",price:1500,type:"ultimate",c:"#fff"}
+{id:"ultimate",name:"KICKZY Ultimate",rarity:"Legendary",price:1500,type:"ultimate",c:"#fff"},
+{id:"owner_royal",name:"OWNER ROYAL",rarity:"OWNER",price:0,type:"ownerRoyal",c:"#7c5cff",ownerOnly:true}
 ];
 
 
@@ -1593,11 +1605,11 @@ function isKickzyOwner(){
   return !!firebaseUser && !!firebaseUser.email && firebaseUser.email.toLowerCase()===KICKZY_OWNER_EMAIL.toLowerCase();
 }
 
-function setAuthStatus(message){
+function setAuthStatus(text){
   const a=document.getElementById("authStatus");
-  const b=document.getElementById("profileAuthStatus");
-  if(a)a.textContent=message||"";
-  if(b)b.textContent=message||"";
+  const p=document.getElementById("profileAuthStatus");
+  if(a)a.textContent=text||"";
+  if(p)p.textContent=text||"";
 }
 
 async function signInWithGoogle(){
@@ -1620,10 +1632,14 @@ async function signOutGoogle(){
 
 function updateAuthUI(){
   const signedIn=!!firebaseUser;
-  const signInButtons=[document.getElementById("googleSignInButton"),document.getElementById("profileGoogleSignInButton")];
-  const signOutButtons=[document.getElementById("googleSignOutButton"),document.getElementById("profileGoogleSignOutButton")];
+  const signInButtons=[document.getElementById("profileGoogleSignInButton")];
+  const signOutButtons=[document.getElementById("profileGoogleSignOutButton")];
   signInButtons.forEach(b=>{if(b)b.classList.toggle("hidden",signedIn)});
   signOutButtons.forEach(b=>{if(b)b.classList.toggle("hidden",!signedIn)});
+  if(!isKickzyOwner() && equippedSkin==="owner_royal"){
+    equippedSkin="default";
+    localStorage.setItem("kickzyEquippedSkin",equippedSkin);
+  }
   if(signedIn){
     const label=isKickzyOwner()?"Signed in • KICKZY OWNER":"Signed in";
     setAuthStatus(label);
@@ -1669,8 +1685,9 @@ function currentDaily(){
 function saveProgress(){localStorage.setItem("kickzyProgress",JSON.stringify(xpState))}
 function xpNeeded(){return 100+(xpState.level-1)*35}
 function addXP(amount){
-  if(!Number.isFinite(amount)||amount<=0)return;
-  xpState.xp+=Math.floor(amount);
+  if(!Number.isFinite(amount)||amount<=0)return 0;
+  const gained=Math.floor(amount);
+  xpState.xp+=gained;
   let need=xpNeeded();
   while(xpState.xp>=need){
     xpState.xp-=need;
@@ -1681,23 +1698,44 @@ function addXP(amount){
   checkAchievements();
   saveProgress();
   updateProfileUI();
+  return gained;
 }
 function checkAchievements(){
   achievements.forEach(a=>{
     if(!xpState.unlocked.includes(a.id)&&a.test())xpState.unlocked.push(a.id);
   });
 }
+function showDailyToast(challenge){
+  const toast=document.getElementById("dailyToast");
+  if(!toast)return;
+  document.getElementById("dailyToastText").textContent=challenge.text;
+  document.getElementById("dailyToastReward").textContent="+50 XP  •  +50 COINS";
+  toast.classList.remove("hidden");
+  toast.classList.remove("show");
+  void toast.offsetWidth;
+  toast.classList.add("show");
+  clearTimeout(window.kickzyDailyToastTimer);
+  window.kickzyDailyToastTimer=setTimeout(()=>{
+    toast.classList.remove("show");
+    setTimeout(()=>toast.classList.add("hidden"),350);
+  },3200);
+}
+
 function updateDailyAfterMatch(goals,wins,matches){
   const c=currentDaily();
   if(c.kind==="goals")xpState.daily.progress=Math.min(c.target,xpState.daily.progress+goals);
   if(c.kind==="wins")xpState.daily.progress=Math.min(c.target,xpState.daily.progress+wins);
   if(c.kind==="matches")xpState.daily.progress=Math.min(c.target,xpState.daily.progress+matches);
+  let completed=false;
   if(xpState.daily.progress>=c.target&&!xpState.daily.done){
     xpState.daily.done=true;
+    completed=true;
     addXP(50);
     addCoins(50);
+    showDailyToast(c);
   }
   saveProgress();
+  return completed;
 }
 
 function saveProfile(){localStorage.setItem("kickzyPlayerName",playerName);localStorage.setItem("kickzyPlayerStats",JSON.stringify(playerStats))}
@@ -1905,6 +1943,7 @@ function previewStyle(s){
     ultimate:`background:radial-gradient(circle at 50% 45%,#ffffff 0 8%,#ffe66d 9% 18%,#ff4dca 19% 35%,#5c2cff 36% 58%,#080014 59%);box-shadow:0 0 26px #7d4dff,0 0 8px #fff`
   };
 
+  if(s.type==="ownerRoyal") return `background:radial-gradient(circle at 35% 25%,#ffffff 0 4%,transparent 5%),linear-gradient(135deg,#090014,#7c5cff 45%,#f5d76e 70%,#ffffff);box-shadow:0 0 22px #7c5cff,0 0 8px #fff`;
   return map[s.type]||`background:${c}`;
 }
 
@@ -1915,6 +1954,7 @@ function renderStore(){
   grid.innerHTML="";
 
   skins
+    .filter(s=>!s.ownerOnly || isKickzyOwner())
     .filter(s=>currentFilter==="all"||s.rarity===currentFilter)
     .forEach(s=>{
 
@@ -1947,13 +1987,13 @@ function renderStore(){
         </div>
 
         <div class="price">
-          <span class="coin-symbol" aria-hidden="true"></span> ${s.price}
+          ${s.ownerOnly ? "👑 OWNER EXCLUSIVE" : `<span class="coin-symbol" aria-hidden="true"></span> ${s.price}`}
         </div>
 
         <button
           class="skin-action ${owned?'':'buy'}"
-          ${!owned&&coins<s.price?'disabled':''}>
-          ${equipped?"EQUIPPED":owned?"EQUIP":"BUY"}
+          ${(!owned&&(!s.ownerOnly&&coins<s.price))?'disabled':''}>
+          ${equipped?"EQUIPPED":owned?"EQUIP":s.ownerOnly?"CLAIM":"BUY"}
         </button>
       `;
 
@@ -1963,9 +2003,11 @@ function renderStore(){
 
         if(!owned){
 
-          if(coins<s.price)return;
+          if(s.ownerOnly){
+            if(!isKickzyOwner())return;
+          }else if(coins<s.price)return;
 
-          coins-=s.price;
+          if(!s.ownerOnly) coins-=s.price;
 
           ownedSkins.push(s.id);
 
@@ -2149,6 +2191,7 @@ const goalText=document.getElementById("goalText");
 const resultTitle=document.getElementById("resultTitle");
 const resultScore=document.getElementById("resultScore");
 const resultCoins=document.getElementById("resultCoins");
+const resultXp=document.getElementById("resultXp");
 
 const gameModeLabel=document.getElementById("gameModeLabel");
 
@@ -3064,13 +3107,16 @@ function finishMatch(){
   saveProfile();
   updateProfileUI();
 
-  addXP(25+blueScore*10+(result==="win"?40:0));
+  const xpReward=addXP(25+blueScore*10+(result==="win"?40:0));
   updateDailyAfterMatch(blueScore,result==="win"?1:0,1);
 
   addCoins(reward);
 
   resultScore.textContent=
     `${blueScore} - ${redScore}`;
+
+  resultXp.textContent=
+    `+${xpReward}`;
 
   resultCoins.textContent=
     `+${reward}`;
@@ -5092,9 +5138,7 @@ function playResultSound(result){
    GOOGLE AUTH EVENTS
 ========================================================= */
 
-document.getElementById("googleSignInButton").onclick=signInWithGoogle;
 document.getElementById("profileGoogleSignInButton").onclick=signInWithGoogle;
-document.getElementById("googleSignOutButton").onclick=signOutGoogle;
 document.getElementById("profileGoogleSignOutButton").onclick=signOutGoogle;
 
 /* =========================================================
