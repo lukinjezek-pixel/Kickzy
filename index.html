@@ -84,6 +84,29 @@ button{
   text-align:center;
 }
 
+.policy-links{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:16px auto 0;
+  padding:4px 8px;
+  font-size:13px;
+  color:#b7c9c1;
+}
+.policy-links a{
+  color:#b9ddff;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  padding:4px 2px;
+}
+.policy-links a:focus-visible{
+  outline:2px solid #b9ddff;
+  outline-offset:3px;
+  border-radius:3px;
+}
+
 .kickzy-logo{
   position:relative;
   display:inline-block;
@@ -1238,6 +1261,11 @@ body.kickzy-ads-enabled #guideMenu{padding-bottom:126px}
       </button>
     </div>
 
+    <nav class="policy-links" aria-label="KICKZY information">
+      <a href="guide.html">Game guide & tips</a>
+      <span aria-hidden="true">·</span>
+      <a href="privacy.html">Privacy policy</a>
+    </nav>
   </div>
 </div>
 
